@@ -16,6 +16,14 @@ This repository is a significant improvement over the [original ClickHouse MCP s
 - **Enhanced Database Operations**: Extended functionality with metadata access and safety guarantees
 - **Production Ready**: Comprehensive configuration options, SSL support, and robust error handling
 
+Feature | Original Server | This Server
+-- | -- | --
+Database Operations | 3 basic tools | 3 enhanced tools with safety
+Cloud Management | ❌ None | ✅ 50+ comprehensive tools
+Code Quality | Basic | Production-ready with proper structure
+SSL Support | Limited | Full SSL configuration options
+Error Handling | Basic | Robust with detailed error messages
+
 ## Features
 
 ### Database Operations
