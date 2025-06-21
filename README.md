@@ -1,35 +1,42 @@
-# ClickHouse MCP Server
+# MCP ClickHouse Server
 
 [![PyPI - Version](https://img.shields.io/pypi/v/mcp-clickhouse)](https://pypi.org/project/mcp-clickhouse)
 
-An MCP server for ClickHouse.
+A comprehensive Model Context Protocol (MCP) server for ClickHouse database operations and ClickHouse Cloud management.
 
 <a href="https://glama.ai/mcp/servers/yvjy4csvo1"><img width="380" height="200" src="https://glama.ai/mcp/servers/yvjy4csvo1/badge" alt="mcp-clickhouse MCP server" /></a>
 
 ## Features
 
-### Tools
+### Database Operations
+- **List databases**: Get all available databases
+- **List tables**: Get detailed table information including schema, row counts, and column details
+- **Run SELECT queries**: Execute read-only queries with timeout protection and safety guarantees
+- **Metadata access**: Full access to ClickHouse system tables
 
-* `run_select_query`
-  * Execute SQL queries on your ClickHouse cluster.
-  * Input: `sql` (string): The SQL query to execute.
-  * All ClickHouse queries are run with `readonly = 1` to ensure they are safe.
-
-* `list_databases`
-  * List all databases on your ClickHouse cluster.
-
-* `list_tables`
-  * List all tables in a database.
-  * Input: `database` (string): The name of the database.
+### ClickHouse Cloud Management (50+ Tools)
+- **Organizations**: List, get details, update settings, view metrics
+- **Services**: Create, manage, start/stop, configure scaling, delete services
+- **API Keys**: Create, list, update, delete API keys
+- **Members**: Manage organization members and roles  
+- **Invitations**: Send and manage organization invitations
+- **Backups**: List, configure, and manage service backups
+- **ClickPipes**: Manage data ingestion pipelines (Beta)
+- **Activities**: View audit logs and organization activities
+- **Usage & Costs**: Get detailed usage and cost analytics
+- **Private Endpoints**: Configure private network access
 
 ## Configuration
+
+### Claude Desktop Setup
 
 1. Open the Claude Desktop configuration file located at:
    * On macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
    * On Windows: `%APPDATA%/Claude/claude_desktop_config.json`
 
-2. Add the following:
+2. Add the following configuration:
 
+#### For Your Own ClickHouse Server
 ```json
 {
   "mcpServers": {
@@ -44,24 +51,21 @@ An MCP server for ClickHouse.
         "mcp-clickhouse"
       ],
       "env": {
-        "CLICKHOUSE_HOST": "<clickhouse-host>",
-        "CLICKHOUSE_PORT": "<clickhouse-port>",
-        "CLICKHOUSE_USER": "<clickhouse-user>",
-        "CLICKHOUSE_PASSWORD": "<clickhouse-password>",
+        "CLICKHOUSE_HOST": "",
+        "CLICKHOUSE_PORT": "",
+        "CLICKHOUSE_USER": "",
+        "CLICKHOUSE_PASSWORD": "",
         "CLICKHOUSE_SECURE": "true",
         "CLICKHOUSE_VERIFY": "true",
         "CLICKHOUSE_CONNECT_TIMEOUT": "30",
-        "CLICKHOUSE_SEND_RECEIVE_TIMEOUT": "30"
+        "CLICKHOUSE_SEND_RECEIVE_TIMEOUT": "300"
       }
     }
   }
 }
 ```
 
-Update the environment variables to point to your own ClickHouse service.
-
-Or, if you'd like to try it out with the [ClickHouse SQL Playground](https://sql.clickhouse.com/), you can use the following config:
-
+#### For ClickHouse SQL Playground (Free Testing)
 ```json
 {
   "mcpServers": {
@@ -83,100 +87,96 @@ Or, if you'd like to try it out with the [ClickHouse SQL Playground](https://sql
         "CLICKHOUSE_SECURE": "true",
         "CLICKHOUSE_VERIFY": "true",
         "CLICKHOUSE_CONNECT_TIMEOUT": "30",
-        "CLICKHOUSE_SEND_RECEIVE_TIMEOUT": "30"
+        "CLICKHOUSE_SEND_RECEIVE_TIMEOUT": "300"
       }
     }
   }
 }
 ```
 
-3. Locate the command entry for `uv` and replace it with the absolute path to the `uv` executable. This ensures that the correct version of `uv` is used when starting the server. On a mac, you can find this path using `which uv`.
+3. **Important**: Locate the command entry for `uv` and replace it with the absolute path to the `uv` executable. On macOS, find this path using `which uv`.
 
 4. Restart Claude Desktop to apply the changes.
 
-## Development
+## Installation
 
-1. In `test-services` directory run `docker compose up -d` to start the ClickHouse cluster.
-
-2. Add the following variables to a `.env` file in the root of the repository.
-
-*Note: The use of the `default` user in this context is intended solely for local development purposes.*
-
+### Option 1: Using uv (Recommended)
 ```bash
-CLICKHOUSE_HOST=localhost
-CLICKHOUSE_PORT=8123
-CLICKHOUSE_USER=default
-CLICKHOUSE_PASSWORD=clickhouse
+# Install via uv (used by Claude Desktop)
+uv add mcp-clickhouse
 ```
 
-3. Run `uv sync` to install the dependencies. To install `uv` follow the instructions [here](https://docs.astral.sh/uv/). Then do `source .venv/bin/activate`.
+### Option 2: Manual Installation
+```bash
+# Clone the repository
+git clone 
+cd mcp-clickhouse
 
-4. For easy testing, you can run `mcp dev mcp_clickhouse/mcp_server.py` to start the MCP server.
+# Install dependencies
+pip install -r requirements.txt
 
-### Environment Variables
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your configuration
+```
 
-The following environment variables are used to configure the ClickHouse connection:
+## Environment Variables
+
+### Database Configuration (Required for database tools)
 
 #### Required Variables
-
-* `CLICKHOUSE_HOST`: The hostname of your ClickHouse server
-* `CLICKHOUSE_USER`: The username for authentication
-* `CLICKHOUSE_PASSWORD`: The password for authentication
+```bash
+CLICKHOUSE_HOST=your-clickhouse-host.com    # ClickHouse server hostname
+CLICKHOUSE_USER=your-username               # Username for authentication
+CLICKHOUSE_PASSWORD=your-password           # Password for authentication
+```
 
 > [!CAUTION]
-> It is important to treat your MCP database user as you would any external client connecting to your database, granting only the minimum necessary privileges required for its operation. The use of default or administrative users should be strictly avoided at all times.
+> Treat your MCP database user as you would any external client connecting to your database. Grant only the minimum necessary privileges required for operation. Avoid using default or administrative users.
 
-#### Optional Variables
+#### Optional Variables (with defaults)
+```bash
+CLICKHOUSE_PORT=8443                        # 8443 for secure, 8123 for non-secure
+CLICKHOUSE_SECURE=true                      # Enable HTTPS connection
+CLICKHOUSE_VERIFY=true                      # Verify SSL certificates
+CLICKHOUSE_CONNECT_TIMEOUT=30               # Connection timeout in seconds
+CLICKHOUSE_SEND_RECEIVE_TIMEOUT=300         # Query timeout in seconds
+CLICKHOUSE_DATABASE=default                 # Default database to use
+CLICKHOUSE_PROXY_PATH=                      # Path for HTTP proxy
+```
 
-* `CLICKHOUSE_PORT`: The port number of your ClickHouse server
-  * Default: `8443` if HTTPS is enabled, `8123` if disabled
-  * Usually doesn't need to be set unless using a non-standard port
-* `CLICKHOUSE_SECURE`: Enable/disable HTTPS connection
-  * Default: `"true"`
-  * Set to `"false"` for non-secure connections
-* `CLICKHOUSE_VERIFY`: Enable/disable SSL certificate verification
-  * Default: `"true"`
-  * Set to `"false"` to disable certificate verification (not recommended for production)
-* `CLICKHOUSE_CONNECT_TIMEOUT`: Connection timeout in seconds
-  * Default: `"30"`
-  * Increase this value if you experience connection timeouts
-* `CLICKHOUSE_SEND_RECEIVE_TIMEOUT`: Send/receive timeout in seconds
-  * Default: `"300"`
-  * Increase this value for long-running queries
-* `CLICKHOUSE_DATABASE`: Default database to use
-  * Default: None (uses server default)
-  * Set this to automatically connect to a specific database
+### Cloud API Configuration (Required for cloud tools)
+```bash
+# Required - Get these from ClickHouse Cloud Console
+CLICKHOUSE_CLOUD_KEY_ID=your-cloud-key-id
+CLICKHOUSE_CLOUD_KEY_SECRET=your-cloud-key-secret
 
-#### Example Configurations
+# Optional
+CLICKHOUSE_CLOUD_API_URL=https://api.clickhouse.cloud
+CLICKHOUSE_CLOUD_TIMEOUT=30
+```
 
-For local development with Docker:
+### Example Configurations
 
+#### Local Development with Docker
 ```env
-# Required variables
 CLICKHOUSE_HOST=localhost
 CLICKHOUSE_USER=default
 CLICKHOUSE_PASSWORD=clickhouse
-
-# Optional: Override defaults for local development
-CLICKHOUSE_SECURE=false  # Uses port 8123 automatically
+CLICKHOUSE_SECURE=false                     # Uses port 8123 automatically
 CLICKHOUSE_VERIFY=false
 ```
 
-For ClickHouse Cloud:
-
+#### ClickHouse Cloud
 ```env
-# Required variables
 CLICKHOUSE_HOST=your-instance.clickhouse.cloud
 CLICKHOUSE_USER=default
 CLICKHOUSE_PASSWORD=your-password
-
-# Optional: These use secure defaults
-# CLICKHOUSE_SECURE=true  # Uses port 8443 automatically
+# CLICKHOUSE_SECURE=true                    # Uses port 8443 automatically
 # CLICKHOUSE_DATABASE=your_database
 ```
 
-For ClickHouse SQL Playground:
-
+#### ClickHouse SQL Playground
 ```env
 CLICKHOUSE_HOST=sql-clickhouse.clickhouse.com
 CLICKHOUSE_USER=demo
@@ -184,42 +184,200 @@ CLICKHOUSE_PASSWORD=
 # Uses secure defaults (HTTPS on port 8443)
 ```
 
-You can set these variables in your environment, in a `.env` file, or in the Claude Desktop configuration:
+## Available Tools
 
-```json
-{
-  "mcpServers": {
-    "mcp-clickhouse": {
-      "command": "uv",
-      "args": [
-        "run",
-        "--with",
-        "mcp-clickhouse",
-        "--python",
-        "3.13",
-        "mcp-clickhouse"
-      ],
-      "env": {
-        "CLICKHOUSE_HOST": "<clickhouse-host>",
-        "CLICKHOUSE_USER": "<clickhouse-user>",
-        "CLICKHOUSE_PASSWORD": "<clickhouse-password>",
-        "CLICKHOUSE_DATABASE": "<optional-database>"
-      }
-    }
-  }
-}
-```
+### Database Tools (3 tools)
+- `list_databases()` - List all databases
+- `list_tables(database, like?, not_like?)` - List tables with metadata  
+- `run_select_query(query)` - Execute SELECT queries (all queries run with `readonly = 1` for safety)
 
-### Running tests
+### Cloud Tools (50+ tools)
+
+#### Organization Management
+- `cloud_list_organizations()` - List available organizations
+- `cloud_get_organization(organization_id)` - Get organization details
+- `cloud_update_organization(organization_id, name?)` - Update organization
+- `cloud_get_organization_metrics(organization_id, filtered_metrics?)` - Get Prometheus metrics
+
+#### Service Management
+- `cloud_list_services(organization_id)` - List all services
+- `cloud_get_service(organization_id, service_id)` - Get service details
+- `cloud_create_service(organization_id, name, provider, region, ...)` - Create new service
+- `cloud_update_service_state(organization_id, service_id, command)` - Start/stop service
+- `cloud_update_service_scaling(organization_id, service_id, ...)` - Configure auto-scaling
+- `cloud_update_service_password(organization_id, service_id, ...)` - Update password
+- `cloud_delete_service(organization_id, service_id)` - Delete service
+- `cloud_get_service_metrics(organization_id, service_id, ...)` - Get service metrics
+
+#### API Key Management
+- `cloud_list_api_keys(organization_id)` - List API keys
+- `cloud_create_api_key(organization_id, name, roles, ...)` - Create API key
+- `cloud_delete_api_key(organization_id, key_id)` - Delete API key
+
+#### Member Management  
+- `cloud_list_members(organization_id)` - List organization members
+- `cloud_update_member_role(organization_id, user_id, role)` - Update member role
+- `cloud_remove_member(organization_id, user_id)` - Remove member
+
+#### Invitation Management
+- `cloud_list_invitations(organization_id)` - List pending invitations
+- `cloud_create_invitation(organization_id, email, role)` - Send invitation
+- `cloud_delete_invitation(organization_id, invitation_id)` - Cancel invitation
+
+#### Backup Management
+- `cloud_list_backups(organization_id, service_id)` - List service backups
+- `cloud_get_backup(organization_id, service_id, backup_id)` - Get backup details
+- `cloud_get_backup_configuration(organization_id, service_id)` - Get backup config
+- `cloud_update_backup_configuration(organization_id, service_id, ...)` - Update backup settings
+
+#### ClickPipes Management (Beta)
+- `cloud_list_clickpipes(organization_id, service_id)` - List ClickPipes
+- `cloud_get_clickpipe(organization_id, service_id, clickpipe_id)` - Get ClickPipe details
+- `cloud_update_clickpipe_state(organization_id, service_id, clickpipe_id, command)` - Start/stop ClickPipe
+- `cloud_delete_clickpipe(organization_id, service_id, clickpipe_id)` - Delete ClickPipe
+
+#### Activity & Audit Logs
+- `cloud_list_activities(organization_id, from_date?, to_date?)` - Get activity logs
+- `cloud_get_activity(organization_id, activity_id)` - Get activity details
+
+#### Usage & Cost Analytics
+- `cloud_get_usage_cost(organization_id, from_date, to_date)` - Get cost breakdown
+
+#### Utilities
+- `cloud_get_available_regions()` - Get supported cloud regions and providers
+- `cloud_get_private_endpoint_config(organization_id, service_id)` - Get private endpoint config
+
+## Development
+
+### Local Development Setup
+
+1. **Start ClickHouse cluster**:
+   ```bash
+   cd test-services
+   docker compose up -d
+   ```
+
+2. **Create environment file**:
+   ```bash
+   # Create .env file in repository root
+   cat > .env << EOF
+   CLICKHOUSE_HOST=localhost
+   CLICKHOUSE_PORT=8123
+   CLICKHOUSE_USER=default
+   CLICKHOUSE_PASSWORD=clickhouse
+   CLICKHOUSE_SECURE=false
+   EOF
+   ```
+
+3. **Install dependencies**:
+   ```bash
+   uv sync                               # Install dependencies
+   source .venv/bin/activate            # Activate virtual environment
+   ```
+
+4. **Run the MCP server**:
+   ```bash
+   mcp dev mcp_clickhouse/mcp_server.py  # Start for testing
+   # OR
+   python -m mcp_clickhouse.main         # Start normally
+   ```
+
+### Running Tests
 
 ```bash
-uv sync --all-extras --dev # install dev dependencies
-uv run ruff check . # run linting
+uv sync --all-extras --dev              # Install dev dependencies
+uv run ruff check .                     # Run linting
 
-docker compose up -d test_services # start ClickHouse
-uv run pytest tests
+docker compose up -d test_services      # Start ClickHouse
+uv run pytest tests                     # Run tests
 ```
+
+## Project Structure
+
+```
+mcp_clickhouse/
+├── __init__.py                 # Package initialization
+├── main.py                     # Entry point
+├── mcp_env.py                  # Database environment configuration
+├── mcp_server.py              # Main server + database tools
+├── cloud_config.py            # Cloud API configuration
+├── cloud_client.py            # HTTP client for Cloud API
+└── cloud_tools.py             # Cloud MCP tools (50+ tools)
+```
+
+## How MCP Tool Discovery Works
+
+1. **Decorator Registration**: All tools use the `@mcp.tool()` decorator
+2. **Import-based Discovery**: When modules are imported, FastMCP automatically scans for decorated functions
+3. **Automatic Registration**: All discovered tools become available through the MCP protocol
+4. **No Manual Setup**: No need to manually register tools or maintain tool lists
+
+## Getting ClickHouse Cloud API Keys
+
+1. Log into [ClickHouse Cloud Console](https://console.clickhouse.cloud/)
+2. Go to **Settings** → **API Keys**
+3. Click **Create API Key**
+4. Choose appropriate permissions (admin, developer, etc.)
+5. Copy the Key ID and Key Secret to your `.env` file
+
+## Examples
+
+### Query Database
+```python
+# List all databases
+databases = list_databases()
+
+# List tables in a specific database  
+tables = list_tables("my_database")
+
+# Run a SELECT query
+result = run_select_query("SELECT count() FROM my_table")
+```
+
+### Manage Cloud Services
+```python
+# List organizations
+orgs = cloud_list_organizations()
+
+# Create a new service
+service = cloud_create_service(
+    organization_id="org-123",
+    name="my-service", 
+    provider="aws",
+    region="us-east-1"
+)
+
+# Start the service
+cloud_update_service_state(
+    organization_id="org-123",
+    service_id="service-456", 
+    command="start"
+)
+```
+
+## Troubleshooting
+
+### Database Connection Issues
+- Verify `CLICKHOUSE_HOST`, `CLICKHOUSE_USER`, and `CLICKHOUSE_PASSWORD`
+- Check network connectivity to ClickHouse server
+- Ensure firewall allows connections on the specified port
+
+### Cloud API Issues  
+- Verify `CLICKHOUSE_CLOUD_KEY_ID` and `CLICKHOUSE_CLOUD_KEY_SECRET`
+- Check API key permissions in ClickHouse Cloud Console
+- Ensure API key is not expired or disabled
+
+### Missing Tools
+- Database tools require database configuration
+- Cloud tools require cloud API configuration
+- Check logs for import errors or missing dependencies
 
 ## YouTube Overview
 
 [![YouTube](http://i.ytimg.com/vi/y9biAm_Fkqw/hqdefault.jpg)](https://www.youtube.com/watch?v=y9biAm_Fkqw)
+
+## License
+
+This project is licensed under the Apache License 2.0. See the [LICENSE](LICENSE) file for details.
+
+Developed by Badr Ouali.
