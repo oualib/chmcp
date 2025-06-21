@@ -1,0 +1,159 @@
+# MCP ClickHouse Test and Development Commands
+
+.PHONY: help install test test-unit test-integration test-slow test-coverage test-watch lint format type-check clean docker-test
+
+# Default target
+help:
+	@echo "Available commands:"
+	@echo "  install          Install dependencies and setup development environment"
+	@echo "  test             Run all tests"
+	@echo "  test-unit        Run unit tests only (fast)"
+	@echo "  test-integration Run integration tests (requires external services)" 
+	@echo "  test-slow        Run slow tests"
+	@echo "  test-coverage    Run tests with detailed coverage report"
+	@echo "  test-watch       Run tests in watch mode (re-run on file changes)"
+	@echo "  lint             Run linting checks"
+	@echo "  format           Format code with ruff"
+	@echo "  type-check       Run type checking with mypy"
+	@echo "  clean            Clean up build artifacts and cache"
+	@echo "  docker-test      Run tests in Docker container"
+	@echo ""
+
+# Development setup
+install:
+	@echo "📦 Installing dependencies..."
+	uv sync --all-extras --dev
+	@echo "✅ Development environment ready!"
+
+# Test commands
+test:
+	@echo "🧪 Running all tests..."
+	uv run pytest
+
+test-unit:
+	@echo "🚀 Running unit tests (fast)..."
+	uv run pytest -m "not integration and not slow" --tb=line
+
+test-integration:
+	@echo "🔗 Running integration tests..."
+	uv run pytest -m integration -v
+
+test-slow:
+	@echo "⏳ Running slow tests..."
+	uv run pytest -m slow -v
+
+test-coverage:
+	@echo "📊 Running tests with detailed coverage..."
+	uv run pytest --cov-report=html --cov-report=term-missing
+	@echo "📖 Coverage report generated in htmlcov/index.html"
+
+test-watch:
+	@echo "👀 Running tests in watch mode..."
+	uv run pytest-watch --runner "uv run pytest"
+
+# Code quality
+lint:
+	@echo "🔍 Running linting checks..."
+	uv run ruff check .
+	@echo "✅ Linting complete!"
+
+format:
+	@echo "🎨 Formatting code..."
+	uv run ruff format .
+	@echo "✅ Code formatted!"
+
+format-check:
+	@echo "🔍 Checking code formatting..."
+	uv run ruff format --check .
+
+type-check:
+	@echo "🔍 Running type checks..."
+	uv run mypy mcp_clickhouse
+	@echo "✅ Type checking complete!"
+
+# Security and quality
+security:
+	@echo "🛡️ Running security checks..."
+	uv run bandit -r mcp_clickhouse/ -f json -o bandit-report.json
+	@echo "📄 Security report generated: bandit-report.json"
+
+# Build and package
+build:
+	@echo "🔨 Building package..."
+	uv build
+	@echo "📦 Package built in dist/"
+
+build-check:
+	@echo "🔍 Checking package build..."
+	uv build
+	uv run python -m twine check dist/*
+
+# Docker operations
+docker-build:
+	@echo "🐳 Building Docker image..."
+	docker build -t mcp-clickhouse:test .
+
+docker-test: docker-build
+	@echo "🧪 Testing Docker image..."
+	docker run --rm mcp-clickhouse:test python -c "import mcp_clickhouse; print('✅ Docker image works!')"
+
+# Database setup for testing
+setup-test-db:
+	@echo "🗄️ Setting up test database..."
+	docker run -d --name clickhouse-test \
+		-p 8123:8123 -p 9000:9000 \
+		clickhouse/clickhouse-server:24.11-alpine
+	@echo "⏳ Waiting for ClickHouse to be ready..."
+	@for i in {1..30}; do \
+		if curl -s http://localhost:8123/ping > /dev/null 2>&1; then \
+			echo "✅ ClickHouse is ready!"; \
+			break; \
+		fi; \
+		echo "⏳ Waiting... ($i/30)"; \
+		sleep 2; \
+	done
+
+cleanup-test-db:
+	@echo "🗑️ Cleaning up test database..."
+	docker stop clickhouse-test || true
+	docker rm clickhouse-test || true
+
+# Cleanup
+clean:
+	@echo "🧹 Cleaning up..."
+	rm -rf build/
+	rm -rf dist/
+	rm -rf *.egg-info/
+	rm -rf .pytest_cache/
+	rm -rf htmlcov/
+	rm -rf .coverage
+	rm -rf coverage.xml
+	rm -rf bandit-report.json
+	find . -type d -name __pycache__ -exec rm -rf {} + 2>/dev/null || true
+	find . -type f -name "*.pyc" -delete
+	@echo "✅ Cleanup complete!"
+
+# Development workflow
+dev-setup: install setup-test-db
+	@echo "🚀 Development environment fully set up!"
+	@echo "Run 'make test' to verify everything works"
+
+dev-teardown: cleanup-test-db clean
+	@echo "👋 Development environment cleaned up!"
+
+# CI simulation
+ci: lint format-check type-check test-unit security build-check
+	@echo "✅ All CI checks passed!"
+
+# Pre-commit hook
+pre-commit: format lint type-check test-unit
+	@echo "✅ Pre-commit checks passed!"
+
+# Full quality check
+quality: lint format-check type-check security test-coverage
+	@echo "✅ Quality checks complete!"
+
+# Release preparation
+release-check: quality test build-check
+	@echo "✅ Release checks passed!"
+	@echo "Ready for release! 🚀"

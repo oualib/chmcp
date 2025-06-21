@@ -12,7 +12,7 @@ ENV UV_LINK_MODE=copy
 
 # Install git and build dependencies for ClickHouse client
 RUN --mount=type=cache,target=/var/cache/apk \
-    apk add git build-base
+    apk add --no-cache git build-base
 
 # Install the project's dependencies using the lockfile and settings
 RUN --mount=type=cache,target=/root/.cache/uv \
@@ -30,14 +30,40 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 # Production stage - Use minimal Python image
 FROM python:3.13-alpine
 
+# Install runtime dependencies for ClickHouse client
+RUN --mount=type=cache,target=/var/cache/apk \
+    apk add --no-cache \
+    ca-certificates \
+    tzdata \
+    && rm -rf /tmp/*
+
+# Create a non-root user for security
+RUN addgroup -g 1001 -S mcp && \
+    adduser -u 1001 -S mcp -G mcp
+
 # Set the working directory
 WORKDIR /app
 
 # Copy the virtual environment from the builder stage
-COPY --from=builder /app/.venv /app/.venv
+COPY --from=builder --chown=mcp:mcp /app/.venv /app/.venv
 
 # Place executables in the environment at the front of the path
 ENV PATH="/app/.venv/bin:$PATH"
+
+# Switch to non-root user
+USER mcp
+
+# Add health check for the MCP server
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD python -c "import mcp_clickhouse; print('MCP ClickHouse server is healthy')" || exit 1
+
+# Add metadata labels
+LABEL org.opencontainers.image.title="MCP ClickHouse Server" \
+      org.opencontainers.image.description="A comprehensive Model Context Protocol server for ClickHouse database operations and cloud management" \
+      org.opencontainers.image.version="0.1.0" \
+      org.opencontainers.image.authors="Badr Ouali <badr.ouali@outlook.fr>" \
+      org.opencontainers.image.source="https://github.com/oualib/mcp-clickhouse-cloud" \
+      org.opencontainers.image.licenses="Apache-2.0"
 
 # Run the MCP ClickHouse server by default
 CMD ["python", "-m", "mcp_clickhouse.main"]
