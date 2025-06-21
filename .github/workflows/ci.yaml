@@ -38,7 +38,7 @@ jobs:
         run: uv python install ${{ env.PYTHON_VERSION }}
 
       - name: Install dependencies
-        run: uv sync --dev
+        run: uv sync --dev ruff
 
       - name: Check code formatting with Ruff
         run: uv run ruff format --check .
@@ -189,7 +189,7 @@ jobs:
           tags: |
             type=ref,event=branch
             type=ref,event=pr
-            type=sha,prefix={{branch}}-
+            type=sha,prefix=sha-
             type=raw,value=test
 
       - name: Build Docker image
