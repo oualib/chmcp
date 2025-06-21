@@ -60,7 +60,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
 # Add metadata labels
 LABEL org.opencontainers.image.title="MCP ClickHouse Cloud Server" \
       org.opencontainers.image.description="A comprehensive Model Context Protocol server for ClickHouse database operations and cloud management" \
-      org.opencontainers.image.version="0.1.0" \
+      org.opencontainers.image.version="0.1.1" \
       org.opencontainers.image.authors="Badr Ouali <badr.ouali@outlook.fr>" \
       org.opencontainers.image.source="https://github.com/oualib/mcp-clickhouse-cloud" \
       org.opencontainers.image.licenses="Apache-2.0"
