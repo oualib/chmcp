@@ -8,16 +8,16 @@ from mcp_clickhouse import list_databases, list_tables, run_select_query, create
 class TestDatabaseTools:
     """Test suite for database operation tools."""
 
-    @patch('mcp_clickhouse.mcp_server.clickhouse_connect.get_client')
+    @patch("mcp_clickhouse.mcp_server.clickhouse_connect.get_client")
     def test_create_clickhouse_client_success(self, mock_get_client, clickhouse_config):
         """Test successful ClickHouse client creation."""
         # Setup mock
         mock_client = MagicMock()
         mock_get_client.return_value = mock_client
-        
+
         # Call the function
         client = create_clickhouse_client()
-        
+
         # Assertions
         mock_get_client.assert_called_once()
         assert client == mock_client

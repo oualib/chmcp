@@ -8,6 +8,7 @@ from unittest.mock import patch, Mock
 class TestIntegration:
     """Integration tests that require external services."""
 
+    @pytest.mark.skip
     def test_clickhouse_playground_connection(self):
         """Test connection to ClickHouse SQL Playground."""
         from mcp_clickhouse.mcp_env import ClickHouseConfig
