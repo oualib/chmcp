@@ -2,7 +2,7 @@
 
 import pytest
 from unittest.mock import Mock, patch
-from mcp_clickhouse.cloud_client import CloudAPIResponse, CloudAPIError
+from mcp_clickhouse_cloud.cloud_client import CloudAPIResponse, CloudAPIError
 
 
 class TestCloudTools:
@@ -10,7 +10,7 @@ class TestCloudTools:
 
     def test_cloud_list_organizations_success(self, mock_cloud_client):
         """Test successful organization listing."""
-        from mcp_clickhouse.cloud_tools import cloud_list_organizations
+        from mcp_clickhouse_cloud.cloud_tools import cloud_list_organizations
 
         # Mock successful response
         mock_response = CloudAPIResponse(
@@ -30,7 +30,7 @@ class TestCloudTools:
 
     def test_cloud_list_organizations_error(self, mock_cloud_client):
         """Test organization listing with API error."""
-        from mcp_clickhouse.cloud_tools import cloud_list_organizations
+        from mcp_clickhouse_cloud.cloud_tools import cloud_list_organizations
 
         # Mock error response
         mock_error = CloudAPIError(status=401, error="Unauthorized", request_id="test-request-456")
@@ -44,7 +44,7 @@ class TestCloudTools:
 
     def test_cloud_get_organization(self, mock_cloud_client):
         """Test getting specific organization details."""
-        from mcp_clickhouse.cloud_tools import cloud_get_organization
+        from mcp_clickhouse_cloud.cloud_tools import cloud_get_organization
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -61,7 +61,7 @@ class TestCloudTools:
 
     def test_cloud_list_services(self, mock_cloud_client):
         """Test listing services in an organization."""
-        from mcp_clickhouse.cloud_tools import cloud_list_services
+        from mcp_clickhouse_cloud.cloud_tools import cloud_list_services
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -87,7 +87,7 @@ class TestCloudTools:
 
     def test_cloud_create_service(self, mock_cloud_client):
         """Test creating a new service."""
-        from mcp_clickhouse.cloud_tools import cloud_create_service
+        from mcp_clickhouse_cloud.cloud_tools import cloud_create_service
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -117,7 +117,7 @@ class TestCloudTools:
 
     def test_cloud_update_service_state(self, mock_cloud_client):
         """Test updating service state."""
-        from mcp_clickhouse.cloud_tools import cloud_update_service_state
+        from mcp_clickhouse_cloud.cloud_tools import cloud_update_service_state
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -137,7 +137,7 @@ class TestCloudTools:
 
     def test_cloud_create_api_key(self, mock_cloud_client):
         """Test creating an API key."""
-        from mcp_clickhouse.cloud_tools import cloud_create_api_key
+        from mcp_clickhouse_cloud.cloud_tools import cloud_create_api_key
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -165,7 +165,7 @@ class TestCloudTools:
 
     def test_cloud_get_available_regions(self):
         """Test getting available regions (static data)."""
-        from mcp_clickhouse.cloud_tools import cloud_get_available_regions
+        from mcp_clickhouse_cloud.cloud_tools import cloud_get_available_regions
 
         result = cloud_get_available_regions()
 

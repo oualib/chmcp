@@ -1,10 +1,10 @@
-# MCP ClickHouse Server
+# MCP ClickHouse Cloud Server
 
-[![PyPI - Version](https://img.shields.io/pypi/v/mcp-clickhouse)](https://pypi.org/project/mcp-clickhouse)
+[![PyPI - Version](https://img.shields.io/pypi/v/mcp-clickhouse-cloud)](https://pypi.org/project/mcp-clickhouse-cloud)
 
 A comprehensive Model Context Protocol (MCP) server for ClickHouse database operations and ClickHouse Cloud management.
 
-<a href="https://glama.ai/mcp/servers/yvjy4csvo1"><img width="380" height="200" src="https://glama.ai/mcp/servers/yvjy4csvo1/badge" alt="mcp-clickhouse MCP server" /></a>
+<a href="https://glama.ai/mcp/servers/yvjy4csvo1"><img width="380" height="200" src="https://glama.ai/mcp/servers/yvjy4csvo1/badge" alt="mcp-clickhouse-cloud MCP server" /></a>
 
 ## Features
 
@@ -40,15 +40,15 @@ A comprehensive Model Context Protocol (MCP) server for ClickHouse database oper
 ```json
 {
   "mcpServers": {
-    "mcp-clickhouse": {
+    "mcp-clickhouse-cloud": {
       "command": "uv",
       "args": [
         "run",
         "--with",
-        "mcp-clickhouse",
+        "mcp-clickhouse-cloud",
         "--python",
         "3.13",
-        "mcp-clickhouse"
+        "mcp-clickhouse-cloud"
       ],
       "env": {
         "CLICKHOUSE_HOST": "",
@@ -69,15 +69,15 @@ A comprehensive Model Context Protocol (MCP) server for ClickHouse database oper
 ```json
 {
   "mcpServers": {
-    "mcp-clickhouse": {
+    "mcp-clickhouse-cloud": {
       "command": "uv",
       "args": [
         "run",
         "--with",
-        "mcp-clickhouse",
+        "mcp-clickhouse-cloud",
         "--python",
         "3.13",
-        "mcp-clickhouse"
+        "mcp-clickhouse-cloud"
       ],
       "env": {
         "CLICKHOUSE_HOST": "sql-clickhouse.clickhouse.com",
@@ -103,14 +103,14 @@ A comprehensive Model Context Protocol (MCP) server for ClickHouse database oper
 ### Option 1: Using uv (Recommended)
 ```bash
 # Install via uv (used by Claude Desktop)
-uv add mcp-clickhouse
+uv add mcp-clickhouse-cloud
 ```
 
 ### Option 2: Manual Installation
 ```bash
 # Clone the repository
 git clone 
-cd mcp-clickhouse
+cd mcp-clickhouse-cloud
 
 # Install dependencies
 pip install -r requirements.txt
@@ -277,9 +277,9 @@ CLICKHOUSE_PASSWORD=
 
 4. **Run the MCP server**:
    ```bash
-   mcp dev mcp_clickhouse/mcp_server.py  # Start for testing
+   mcp dev mcp_clickhouse_cloud/mcp_server.py  # Start for testing
    # OR
-   python -m mcp_clickhouse.main         # Start normally
+   python -m mcp_clickhouse_cloud.main         # Start normally
    ```
 
 ### Running Tests
@@ -295,7 +295,7 @@ uv run pytest tests                     # Run tests
 ## Project Structure
 
 ```
-mcp_clickhouse/
+mcp_clickhouse_cloud/
 ├── __init__.py                 # Package initialization
 ├── main.py                     # Entry point
 ├── mcp_env.py                  # Database environment configuration

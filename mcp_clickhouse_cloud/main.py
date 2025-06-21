@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Main entry point for the MCP ClickHouse server."""
+"""Main entry point for the MCP ClickHouse Cloud server."""
 
 import sys
 import logging
@@ -20,7 +20,7 @@ def setup_logging() -> None:
 
 
 def main() -> NoReturn:
-    """Start the MCP ClickHouse server.
+    """Start the MCP ClickHouse Cloud server.
 
     This function initializes logging and starts the FastMCP server.
     It does not return as the server runs indefinitely.
@@ -28,7 +28,7 @@ def main() -> NoReturn:
     try:
         setup_logging()
         logger = logging.getLogger(__name__)
-        logger.info("Starting MCP ClickHouse server...")
+        logger.info("Starting MCP ClickHouse Cloud server...")
 
         mcp.run()
     except KeyboardInterrupt:

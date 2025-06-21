@@ -1,7 +1,7 @@
 # Copyright 2025 Badr Ouali
 # SPDX-License-Identifier: Apache-2.0
 
-"""Environment configuration for the MCP ClickHouse server.
+"""Environment configuration for the MCP ClickHouse Cloud server.
 
 This module handles all environment variable configuration with sensible defaults
 and type conversion using a singleton pattern for efficient configuration access.
@@ -88,7 +88,7 @@ class ClickHouseConfig:
             "verify": self.verify,
             "connect_timeout": self.connect_timeout,
             "send_receive_timeout": self.send_receive_timeout,
-            "client_name": "mcp_clickhouse",
+            "client_name": "mcp_clickhouse_cloud",
         }
 
         # Add optional fields if they are set
