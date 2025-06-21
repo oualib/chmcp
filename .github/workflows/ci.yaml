@@ -143,6 +143,7 @@ jobs:
           path: |
             test-results.xml
             coverage.xml
+        continue-on-error: true
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
