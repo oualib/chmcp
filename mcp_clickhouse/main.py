@@ -15,13 +15,13 @@ def setup_logging() -> None:
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
         handlers=[
             logging.StreamHandler(sys.stdout),
-        ]
+        ],
     )
 
 
 def main() -> NoReturn:
     """Start the MCP ClickHouse server.
-    
+
     This function initializes logging and starts the FastMCP server.
     It does not return as the server runs indefinitely.
     """
@@ -29,7 +29,7 @@ def main() -> NoReturn:
         setup_logging()
         logger = logging.getLogger(__name__)
         logger.info("Starting MCP ClickHouse server...")
-        
+
         mcp.run()
     except KeyboardInterrupt:
         logger.info("Server stopped by user")

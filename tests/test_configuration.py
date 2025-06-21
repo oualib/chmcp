@@ -18,12 +18,12 @@ class TestDatabaseConfiguration:
             "CLICKHOUSE_PASSWORD": "test-password",
             "CLICKHOUSE_PORT": "9000",
             "CLICKHOUSE_SECURE": "true",
-            "CLICKHOUSE_DATABASE": "test_db"
+            "CLICKHOUSE_DATABASE": "test_db",
         }
-        
+
         with patch.dict(os.environ, env_vars):
             config = ClickHouseConfig.from_environment()
-            
+
             assert config.host == "test-host.com"
             assert config.username == "test-user"
             assert config.password == "test-password"
@@ -43,12 +43,12 @@ class TestDatabaseConfiguration:
         env_vars = {
             "CLICKHOUSE_HOST": "test-host.com",
             "CLICKHOUSE_USER": "test-user",
-            "CLICKHOUSE_PASSWORD": "test-password"
+            "CLICKHOUSE_PASSWORD": "test-password",
         }
-        
+
         with patch.dict(os.environ, env_vars, clear=True):
             config = ClickHouseConfig.from_environment()
-            
+
             assert config.port == 8443  # Default for secure=True
             assert config.secure is True
             assert config.verify is True
@@ -63,9 +63,9 @@ class TestDatabaseConfiguration:
             "CLICKHOUSE_HOST": "test-host.com",
             "CLICKHOUSE_USER": "test-user",
             "CLICKHOUSE_PASSWORD": "test-password",
-            "CLICKHOUSE_SECURE": "false"
+            "CLICKHOUSE_SECURE": "false",
         }
-        
+
         with patch.dict(os.environ, env_vars, clear=True):
             config = ClickHouseConfig.from_environment()
             assert config.port == 8123
@@ -74,17 +74,17 @@ class TestDatabaseConfiguration:
         """Test ConfigManager singleton behavior."""
         # Reset singleton
         ConfigManager.reset()
-        
+
         env_vars = {
             "CLICKHOUSE_HOST": "test-host.com",
             "CLICKHOUSE_USER": "test-user",
-            "CLICKHOUSE_PASSWORD": "test-password"
+            "CLICKHOUSE_PASSWORD": "test-password",
         }
-        
+
         with patch.dict(os.environ, env_vars):
             config1 = ConfigManager.get_config()
             config2 = ConfigManager.get_config()
-            
+
             # Should be the same instance
             assert config1 is config2
 
@@ -98,12 +98,12 @@ class TestCloudConfiguration:
             "CLICKHOUSE_CLOUD_KEY_ID": "test-key-id",
             "CLICKHOUSE_CLOUD_KEY_SECRET": "test-key-secret",
             "CLICKHOUSE_CLOUD_API_URL": "https://test-api.clickhouse.com",
-            "CLICKHOUSE_CLOUD_TIMEOUT": "60"
+            "CLICKHOUSE_CLOUD_TIMEOUT": "60",
         }
-        
+
         with patch.dict(os.environ, env_vars):
             config = ClickHouseCloudConfig.from_environment()
-            
+
             assert config.key_id == "test-key-id"
             assert config.key_secret == "test-key-secret"
             assert config.api_url == "https://test-api.clickhouse.com"
@@ -113,12 +113,12 @@ class TestCloudConfiguration:
         """Test cloud configuration defaults."""
         env_vars = {
             "CLICKHOUSE_CLOUD_KEY_ID": "test-key-id",
-            "CLICKHOUSE_CLOUD_KEY_SECRET": "test-key-secret"
+            "CLICKHOUSE_CLOUD_KEY_SECRET": "test-key-secret",
         }
-        
+
         with patch.dict(os.environ, env_vars, clear=True):
             config = ClickHouseCloudConfig.from_environment()
-            
+
             assert config.api_url == "https://api.clickhouse.cloud"
             assert config.timeout == 30
 
@@ -126,11 +126,11 @@ class TestCloudConfiguration:
         """Test auth tuple generation."""
         env_vars = {
             "CLICKHOUSE_CLOUD_KEY_ID": "test-key-id",
-            "CLICKHOUSE_CLOUD_KEY_SECRET": "test-key-secret"
+            "CLICKHOUSE_CLOUD_KEY_SECRET": "test-key-secret",
         }
-        
+
         with patch.dict(os.environ, env_vars):
             config = ClickHouseCloudConfig.from_environment()
             auth_tuple = config.get_auth_tuple()
-            
+
             assert auth_tuple == ("test-key-id", "test-key-secret")
