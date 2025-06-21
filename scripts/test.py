@@ -99,7 +99,9 @@ def main():
         )
 
     elif args.test_type == "type":
-        success &= run_command(["uv", "run", "mypy", "mcp_clickhouse_cloud"], "Type checking with MyPy")
+        success &= run_command(
+            ["uv", "run", "mypy", "mcp_clickhouse_cloud"], "Type checking with MyPy"
+        )
 
     elif args.test_type == "unit":
         cmd = pytest_cmd + ["-m", "not integration and not slow"]

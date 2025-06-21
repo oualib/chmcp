@@ -2,7 +2,12 @@
 
 import pytest
 from unittest.mock import patch, Mock, MagicMock
-from mcp_clickhouse_cloud import list_databases, list_tables, run_select_query, create_clickhouse_client
+from mcp_clickhouse_cloud import (
+    list_databases,
+    list_tables,
+    run_select_query,
+    create_clickhouse_client,
+)
 
 
 class TestDatabaseTools:
