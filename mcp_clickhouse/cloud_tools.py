@@ -1,3 +1,6 @@
+# Copyright 2025 Badr Ouali
+# SPDX-License-Identifier: Apache-2.0
+
 """ClickHouse Cloud MCP Tools.
 
 This module provides comprehensive MCP tools for all ClickHouse Cloud API operations

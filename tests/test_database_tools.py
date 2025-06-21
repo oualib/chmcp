@@ -40,6 +40,7 @@ class TestDatabaseTools:
             with pytest.raises(Exception):
                 create_clickhouse_client()
 
+    @pytest.mark.skip(reason="Requires live ClickHouse connection")
     def test_list_databases(self, clickhouse_client, test_database):
         """Test listing databases."""
         result = list_databases()
@@ -56,6 +57,7 @@ class TestDatabaseTools:
             with pytest.raises(Exception, match="Connection failed"):
                 list_databases()
 
+    @pytest.mark.skip(reason="Requires live ClickHouse connection")
     def test_list_tables_basic(self, clickhouse_client, test_database, test_table):
         """Test basic table listing."""
         result = list_tables(test_database)
@@ -74,6 +76,7 @@ class TestDatabaseTools:
         assert isinstance(test_table_info["columns"], list)
         assert len(test_table_info["columns"]) == 6
 
+    @pytest.mark.skip(reason="Requires live ClickHouse connection")
     def test_list_tables_with_like_filter(self, clickhouse_client, test_database, test_table):
         """Test table listing with LIKE filter."""
         result = list_tables(test_database, like=f"{test_table}%")
@@ -82,6 +85,7 @@ class TestDatabaseTools:
         assert len(result) == 1
         assert result[0]["name"] == test_table
 
+    @pytest.mark.skip(reason="Requires live ClickHouse connection")
     def test_list_tables_with_not_like_filter(self, clickhouse_client, test_database, test_table):
         """Test table listing with NOT LIKE filter."""
         result = list_tables(test_database, not_like="nonexistent%")
@@ -91,6 +95,7 @@ class TestDatabaseTools:
         table_names = [t["name"] for t in result]
         assert test_table in table_names
 
+    @pytest.mark.skip(reason="Requires live ClickHouse connection")
     def test_list_tables_column_details(self, clickhouse_client, test_database, test_table):
         """Test detailed column information in table listing."""
         result = list_tables(test_database)
@@ -115,11 +120,13 @@ class TestDatabaseTools:
         assert columns["created_at"]["column_type"] == "DateTime"
         assert columns["created_at"]["default_kind"] == "DEFAULT"
 
+    @pytest.mark.skip(reason="Requires live ClickHouse connection")
     def test_list_tables_nonexistent_database(self, clickhouse_client):
         """Test listing tables for nonexistent database."""
         with pytest.raises(Exception):
             list_tables("nonexistent_database_12345")
 
+    @pytest.mark.skip(reason="Requires live ClickHouse connection")
     def test_run_select_query_success(self, clickhouse_client, test_database, test_table):
         """Test successful SELECT query execution."""
         query = f"SELECT id, name, email FROM {test_database}.{test_table} ORDER BY id"
@@ -139,6 +146,7 @@ class TestDatabaseTools:
         assert result["rows"][0] == [1, "Alice Johnson", "alice@example.com"]
         assert result["rows"][1] == [2, "Bob Smith", "bob@example.com"]
 
+    @pytest.mark.skip(reason="Requires live ClickHouse connection")
     def test_run_select_query_with_filters(self, clickhouse_client, test_database, test_table):
         """Test SELECT query with WHERE clause."""
         query = f"SELECT name FROM {test_database}.{test_table} WHERE age > 30 ORDER BY name"
@@ -149,6 +157,7 @@ class TestDatabaseTools:
         assert result["rows"][0][0] == "Bob Smith"
         assert result["rows"][1][0] == "Charlie Brown"
 
+    @pytest.mark.skip(reason="Requires live ClickHouse connection")
     def test_run_select_query_aggregation(self, clickhouse_client, test_database, test_table):
         """Test SELECT query with aggregation."""
         query = f"SELECT COUNT(*) as total, AVG(age) as avg_age FROM {test_database}.{test_table}"
@@ -159,6 +168,7 @@ class TestDatabaseTools:
         assert result["rows"][0][0] == 4  # COUNT(*)
         assert result["rows"][0][1] == 33.75  # AVG(age)
 
+    @pytest.mark.skip(reason="Requires live ClickHouse connection")
     def test_run_select_query_syntax_error(self, clickhouse_client):
         """Test SELECT query with syntax error."""
         query = "SELECT * FROMM invalid_syntax"
@@ -169,6 +179,7 @@ class TestDatabaseTools:
         assert "message" in result
         assert len(result["message"]) > 0
 
+    @pytest.mark.skip(reason="Requires live ClickHouse connection")
     def test_run_select_query_nonexistent_table(self, clickhouse_client, test_database):
         """Test SELECT query on nonexistent table."""
         query = f"SELECT * FROM {test_database}.nonexistent_table"
@@ -177,6 +188,7 @@ class TestDatabaseTools:
         assert result["status"] == "error"
         assert "message" in result
 
+    @pytest.mark.skip(reason="Requires live ClickHouse connection")
     def test_run_select_query_timeout(self, clickhouse_client):
         """Test SELECT query timeout handling."""
         # This test simulates a long-running query
@@ -195,6 +207,7 @@ class TestDatabaseTools:
                 assert result["status"] == "error"
                 assert "timed out" in result["message"]
 
+    @pytest.mark.skip(reason="Requires live ClickHouse connection")
     def test_readonly_query_enforcement(self, clickhouse_client, test_database):
         """Test that only SELECT queries are allowed (readonly enforcement)."""
         # INSERT should fail due to readonly setting
