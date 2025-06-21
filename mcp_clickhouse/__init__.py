@@ -1,7 +1,7 @@
 """MCP ClickHouse Server Package.
 
 This package provides a Model Context Protocol (MCP) server for ClickHouse database operations
-and ClickHouse Cloud management. It exposes tools for listing databases, tables, running SELECT 
+and ClickHouse Cloud management. It exposes tools for listing databases, tables, running SELECT
 queries, and comprehensive cloud management including services, API keys, members, backups, and more.
 """
 
@@ -24,7 +24,7 @@ __author__ = "Badr Ouali"
 
 __all__ = [
     "create_clickhouse_client",
-    "list_databases", 
+    "list_databases",
     "list_tables",
     "run_select_query",
 ]

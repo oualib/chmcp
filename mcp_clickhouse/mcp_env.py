@@ -18,7 +18,7 @@ class ClickHouseConfig:
 
     Required environment variables:
         CLICKHOUSE_HOST: The hostname of the ClickHouse server
-        CLICKHOUSE_USER: The username for authentication  
+        CLICKHOUSE_USER: The username for authentication
         CLICKHOUSE_PASSWORD: The password for authentication
 
     Optional environment variables (with defaults):
@@ -45,18 +45,18 @@ class ClickHouseConfig:
     @classmethod
     def from_environment(cls) -> "ClickHouseConfig":
         """Create a ClickHouseConfig instance from environment variables.
-        
+
         Returns:
             ClickHouseConfig: Configuration instance populated from environment.
-            
+
         Raises:
             ValueError: If any required environment variable is missing.
         """
         cls._validate_required_environment_variables()
-        
+
         # Parse secure setting first as it affects port default
         secure = cls._parse_boolean_env("CLICKHOUSE_SECURE", default=True)
-        
+
         return cls(
             host=os.environ["CLICKHOUSE_HOST"],
             username=os.environ["CLICKHOUSE_USER"],
@@ -91,7 +91,7 @@ class ClickHouseConfig:
         # Add optional fields if they are set
         if self.database:
             config["database"] = self.database
-            
+
         if self.proxy_path:
             config["proxy_path"] = self.proxy_path
 
@@ -108,18 +108,16 @@ class ClickHouseConfig:
         missing_vars = [var for var in required_vars if var not in os.environ]
 
         if missing_vars:
-            raise ValueError(
-                f"Missing required environment variables: {', '.join(missing_vars)}"
-            )
+            raise ValueError(f"Missing required environment variables: {', '.join(missing_vars)}")
 
     @staticmethod
     def _parse_boolean_env(var_name: str, default: bool) -> bool:
         """Parse a boolean environment variable.
-        
+
         Args:
             var_name: Name of the environment variable
             default: Default value if not set
-            
+
         Returns:
             bool: Parsed boolean value
         """
@@ -131,14 +129,14 @@ class ClickHouseConfig:
     @staticmethod
     def _parse_int_env(var_name: str, default: int) -> int:
         """Parse an integer environment variable.
-        
+
         Args:
             var_name: Name of the environment variable
             default: Default value if not set
-            
+
         Returns:
             int: Parsed integer value
-            
+
         Raises:
             ValueError: If the environment variable cannot be parsed as an integer
         """
@@ -153,10 +151,10 @@ class ClickHouseConfig:
     @staticmethod
     def _parse_port(secure: bool) -> int:
         """Parse the port from environment or return appropriate default.
-        
+
         Args:
             secure: Whether secure connection is enabled
-            
+
         Returns:
             int: Port number to use
         """
@@ -166,27 +164,27 @@ class ClickHouseConfig:
                 return int(port_str)
             except ValueError as e:
                 raise ValueError(f"Invalid port value: {port_str}") from e
-        
+
         # Return default based on security setting
         return 8443 if secure else 8123
 
 
 class ConfigManager:
     """Singleton manager for ClickHouseConfig instances."""
-    
+
     _instance: Optional[ClickHouseConfig] = None
-    
+
     @classmethod
     def get_config(cls) -> ClickHouseConfig:
         """Get the singleton instance of ClickHouseConfig.
-        
+
         Returns:
             ClickHouseConfig: The configuration instance
         """
         if cls._instance is None:
             cls._instance = ClickHouseConfig.from_environment()
         return cls._instance
-    
+
     @classmethod
     def reset(cls) -> None:
         """Reset the singleton instance (useful for testing)."""
@@ -195,9 +193,9 @@ class ConfigManager:
 
 def get_config() -> ClickHouseConfig:
     """Get the singleton instance of ClickHouseConfig.
-    
+
     This is the main entry point for accessing configuration.
-    
+
     Returns:
         ClickHouseConfig: The configuration instance
     """
