@@ -38,7 +38,8 @@ jobs:
         run: uv python install ${{ env.PYTHON_VERSION }}
 
       - name: Install dependencies
-        run: uv sync --dev ruff
+        run: uv sync --dev
+             uv add --dev ruff
 
       - name: Check code formatting with Ruff
         run: uv run ruff format --check .
