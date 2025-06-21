@@ -19,12 +19,14 @@ class ClickHouseCloudConfig:
     Optional environment variables:
         CLICKHOUSE_CLOUD_API_URL: API base URL (default: https://api.clickhouse.cloud)
         CLICKHOUSE_CLOUD_TIMEOUT: Request timeout in seconds (default: 30)
+        CLICKHOUSE_CLOUD_VERIFY_SSL: Verify SSL certificates (default: true)
     """
 
     key_id: str
     key_secret: str
     api_url: str
     timeout: int
+    verify_ssl: bool = True
 
     @classmethod
     def from_environment(cls) -> "ClickHouseCloudConfig":
@@ -43,6 +45,7 @@ class ClickHouseCloudConfig:
             key_secret=os.environ["CLICKHOUSE_CLOUD_KEY_SECRET"],
             api_url=os.getenv("CLICKHOUSE_CLOUD_API_URL", "https://api.clickhouse.cloud"),
             timeout=cls._parse_int_env("CLICKHOUSE_CLOUD_TIMEOUT", default=30),
+            verify_ssl=cls._parse_boolean_env("CLICKHOUSE_CLOUD_VERIFY_SSL", default=True),
         )
 
     def get_auth_tuple(self) -> tuple[str, str]:
@@ -87,6 +90,22 @@ class ClickHouseCloudConfig:
             return int(value)
         except ValueError as e:
             raise ValueError(f"Invalid integer value for {var_name}: {value}") from e
+
+    @staticmethod
+    def _parse_boolean_env(var_name: str, default: bool) -> bool:
+        """Parse a boolean environment variable.
+
+        Args:
+            var_name: Environment variable name
+            default: Default value if not set
+
+        Returns:
+            bool: Parsed boolean value
+        """
+        value = os.getenv(var_name)
+        if value is None:
+            return default
+        return value.lower() in ("true", "1", "yes", "on")
 
 
 class CloudConfigManager:
