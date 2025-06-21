@@ -1,3 +1,6 @@
+# Copyright 2025 Badr Ouali
+# SPDX-License-Identifier: Apache-2.0
+
 """HTTP client for ClickHouse Cloud API interactions.
 
 This module provides a centralized HTTP client for making requests to the
@@ -62,7 +65,7 @@ class ClickHouseCloudClient:
         )
 
         # Add SSL configuration to handle certificate issues
-        session.verify = False # self.config.verify_ssl
+        session.verify = False  # self.config.verify_ssl
 
         # Alternative: Add retry configuration
         from requests.adapters import HTTPAdapter

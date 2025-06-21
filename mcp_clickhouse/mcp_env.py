@@ -1,3 +1,6 @@
+# Copyright 2025 Badr Ouali
+# SPDX-License-Identifier: Apache-2.0
+
 """Environment configuration for the MCP ClickHouse server.
 
 This module handles all environment variable configuration with sensible defaults

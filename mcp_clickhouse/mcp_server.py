@@ -1,3 +1,6 @@
+# Copyright 2025 Badr Ouali
+# SPDX-License-Identifier: Apache-2.0
+
 """MCP ClickHouse Server Implementation.
 
 This module provides the FastMCP server implementation for ClickHouse database operations

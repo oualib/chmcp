@@ -8,6 +8,7 @@ from unittest.mock import patch, Mock
 class TestIntegration:
     """Integration tests that require external services."""
 
+    @pytest.mark.skip(reason="Requires live ClickHouse connection")
     def test_clickhouse_playground_connection(self):
         """Test connection to ClickHouse SQL Playground."""
         from mcp_clickhouse.mcp_env import ClickHouseConfig
@@ -36,6 +37,7 @@ class TestIntegration:
             assert result["status"] == "success"
             assert result["rows"][0][0] == 1
 
+    @pytest.mark.skip(reason="Requires live ClickHouse connection")
     @pytest.mark.slow
     def test_large_query_performance(self, clickhouse_client, test_database):
         """Test performance with larger datasets."""

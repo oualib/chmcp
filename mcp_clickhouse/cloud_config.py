@@ -1,3 +1,6 @@
+# Copyright 2025 Badr Ouali
+# SPDX-License-Identifier: Apache-2.0
+
 """Cloud configuration module for ClickHouse Cloud API access.
 
 This module handles authentication and configuration for ClickHouse Cloud API.
