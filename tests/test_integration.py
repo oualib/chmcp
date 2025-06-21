@@ -1,6 +1,7 @@
 """Integration tests (marked for CI)."""
 
 import pytest
+from unittest.mock import patch, Mock
 
 
 @pytest.mark.integration
