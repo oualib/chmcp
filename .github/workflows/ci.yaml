@@ -70,6 +70,15 @@ jobs:
         ports:
           - 9000:9000
           - 8123:8123
+        env:
+          CLICKHOUSE_HOST: "localhost"
+          CLICKHOUSE_PORT: "8123"
+          CLICKHOUSE_USER: "default"
+          CLICKHOUSE_PASSWORD: ""
+          CLICKHOUSE_SECURE: "false"
+          CLICKHOUSE_VERIFY: "false"
+          CLICKHOUSE_CONNECT_TIMEOUT: "10"
+          CLICKHOUSE_SEND_RECEIVE_TIMEOUT: "30"
         options: >-
           --health-cmd="wget --no-verbose --tries=1 --spider http://localhost:8123/ping || exit 1"
           --health-interval=10s
