@@ -25,7 +25,7 @@ def clickhouse_config():
 @pytest.fixture(scope="session")
 def test_database():
     """Provide test database name."""
-    return "test_mcp_clickhouse"
+    return "test_mcp_clickhouse_cloud"
 
 
 @pytest.fixture(scope="session")
@@ -37,7 +37,7 @@ def test_table():
 @pytest.fixture(scope="session")
 def clickhouse_client(clickhouse_config, test_database, test_table):
     """Create a ClickHouse client and set up test data."""
-    from mcp_clickhouse import create_clickhouse_client
+    from mcp_clickhouse_cloud import create_clickhouse_client
 
     try:
         client = create_clickhouse_client()
@@ -89,7 +89,7 @@ def clickhouse_client(clickhouse_config, test_database, test_table):
 @pytest.fixture
 def mock_cloud_client():
     """Mock cloud client for testing cloud functionality."""
-    with patch("mcp_clickhouse.cloud_tools.create_cloud_client") as mock:
+    with patch("mcp_clickhouse_cloud.cloud_tools.create_cloud_client") as mock:
         mock_client = Mock()
         mock.return_value = mock_client
         yield mock_client

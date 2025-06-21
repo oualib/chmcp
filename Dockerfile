@@ -55,15 +55,15 @@ USER mcp
 
 # Add health check for the MCP server
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD python -c "import mcp_clickhouse; print('MCP ClickHouse server is healthy')" || exit 1
+    CMD python -c "import mcp_clickhouse_cloud; print('MCP ClickHouse Cloud server is healthy')" || exit 1
 
 # Add metadata labels
-LABEL org.opencontainers.image.title="MCP ClickHouse Server" \
+LABEL org.opencontainers.image.title="MCP ClickHouse Cloud Server" \
       org.opencontainers.image.description="A comprehensive Model Context Protocol server for ClickHouse database operations and cloud management" \
       org.opencontainers.image.version="0.1.0" \
       org.opencontainers.image.authors="Badr Ouali <badr.ouali@outlook.fr>" \
       org.opencontainers.image.source="https://github.com/oualib/mcp-clickhouse-cloud" \
       org.opencontainers.image.licenses="Apache-2.0"
 
-# Run the MCP ClickHouse server by default
-CMD ["python", "-m", "mcp_clickhouse.main"]
+# Run the MCP ClickHouse Cloud server by default
+CMD ["python", "-m", "mcp_clickhouse_cloud.main"]

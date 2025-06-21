@@ -62,9 +62,9 @@ jobs:
           ENVIRONMENT="${{ github.event.inputs.environment || 'pypi' }}"
           
           if [ "$ENVIRONMENT" = "testpypi" ]; then
-            PYPI_URL="https://test.pypi.org/pypi/mcp-clickhouse/$VERSION/json"
+            PYPI_URL="https://test.pypi.org/pypi/mcp-clickhouse-cloud/$VERSION/json"
           else
-            PYPI_URL="https://pypi.org/pypi/mcp-clickhouse/$VERSION/json"
+            PYPI_URL="https://pypi.org/pypi/mcp-clickhouse-cloud/$VERSION/json"
           fi
           
           echo "🔍 Checking if version $VERSION exists on $ENVIRONMENT..."
@@ -188,14 +188,14 @@ jobs:
           
           # Test import
           python -c "
-          import mcp_clickhouse
+          import mcp_clickhouse_cloud
           print(f'✅ Package imports successfully')
-          print(f'Version: {mcp_clickhouse.__version__}')
-          print(f'Author: {mcp_clickhouse.__author__}')
+          print(f'Version: {mcp_clickhouse_cloud.__version__}')
+          print(f'Author: {mcp_clickhouse_cloud.__author__}')
           "
           
           # Test CLI
-          python -m mcp_clickhouse.main --help >/dev/null && echo "✅ CLI works"
+          python -m mcp_clickhouse_cloud.main --help >/dev/null && echo "✅ CLI works"
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
@@ -215,7 +215,7 @@ jobs:
        (github.event.inputs.environment == 'pypi' && github.event_name == 'workflow_dispatch'))
     environment:
       name: testpypi
-      url: "https://test.pypi.org/p/mcp-clickhouse"
+      url: "https://test.pypi.org/p/mcp-clickhouse-cloud"
     permissions:
       id-token: write
     
@@ -239,7 +239,7 @@ jobs:
           echo "⏳ Waiting for package to be available on TestPyPI..."
           
           for i in {1..12}; do
-            if pip index versions --index-url https://test.pypi.org/simple/ mcp-clickhouse | grep -q "$VERSION"; then
+            if pip index versions --index-url https://test.pypi.org/simple/ mcp-clickhouse-cloud | grep -q "$VERSION"; then
               echo "✅ Package $VERSION is available on TestPyPI"
               break
             fi
@@ -247,7 +247,7 @@ jobs:
             sleep 10
           done
           
-          echo "🔗 TestPyPI URL: https://test.pypi.org/project/mcp-clickhouse/$VERSION/"
+          echo "🔗 TestPyPI URL: https://test.pypi.org/project/mcp-clickhouse-cloud/$VERSION/"
 
   publish-pypi:
     name: Publish to PyPI
@@ -260,7 +260,7 @@ jobs:
       !failure()
     environment:
       name: pypi
-      url: "https://pypi.org/p/mcp-clickhouse"
+      url: "https://pypi.org/p/mcp-clickhouse-cloud"
     permissions:
       id-token: write
     
@@ -292,7 +292,7 @@ jobs:
           echo "⏳ Waiting for package to be available on PyPI..."
           
           for i in {1..12}; do
-            if pip index versions mcp-clickhouse | grep -q "$VERSION"; then
+            if pip index versions mcp-clickhouse-cloud | grep -q "$VERSION"; then
               echo "✅ Package $VERSION is available on PyPI"
               break
             fi
@@ -301,7 +301,7 @@ jobs:
           done
           
           echo "🎉 Publication successful!"
-          echo "🔗 PyPI URL: https://pypi.org/project/mcp-clickhouse/$VERSION/"
+          echo "🔗 PyPI URL: https://pypi.org/project/mcp-clickhouse-cloud/$VERSION/"
 
   create-release-notes:
     name: Create Release Notes
@@ -326,14 +326,14 @@ jobs:
             ## 📦 Installation
             
             \`\`\`bash
-            pip install mcp-clickhouse==${version}
+            pip install mcp-clickhouse-cloud==${version}
             # or
-            uv add mcp-clickhouse==${version}
+            uv add mcp-clickhouse-cloud==${version}
             \`\`\`
             
             ## 🔗 Links
             
-            - 📦 [PyPI Package](https://pypi.org/project/mcp-clickhouse/${version}/)
+            - 📦 [PyPI Package](https://pypi.org/project/mcp-clickhouse-cloud/${version}/)
             - 📚 [Documentation](https://github.com/oualib/mcp-clickhouse-cloud#readme)
             - 🐛 [Report Issues](https://github.com/oualib/mcp-clickhouse-cloud/issues)
             `;
@@ -365,8 +365,8 @@ jobs:
           echo "| Status | ${{ needs.publish-pypi.result }} |" >> $GITHUB_STEP_SUMMARY
           
           if [ "${{ needs.publish-pypi.result }}" = "success" ]; then
-            echo "| PyPI URL | https://pypi.org/project/mcp-clickhouse/$VERSION/ |" >> $GITHUB_STEP_SUMMARY
-            echo "| Install Command | \`pip install mcp-clickhouse==$VERSION\` |" >> $GITHUB_STEP_SUMMARY
+            echo "| PyPI URL | https://pypi.org/project/mcp-clickhouse-cloud/$VERSION/ |" >> $GITHUB_STEP_SUMMARY
+            echo "| Install Command | \`pip install mcp-clickhouse-cloud==$VERSION\` |" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
             echo "🎉 **Publication successful!**" >> $GITHUB_STEP_SUMMARY
           else

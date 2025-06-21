@@ -1,5 +1,5 @@
 [project]
-name = "mcp-clickhouse"
+name = "mcp-clickhouse-cloud"
 version = "0.1.0"
 description = "A comprehensive Model Context Protocol (MCP) server for ClickHouse database operations and ClickHouse Cloud management."
 readme = "README.md"
@@ -44,7 +44,7 @@ dependencies = [
 ]
 
 [project.scripts]
-mcp-clickhouse = "mcp_clickhouse.main:main"
+mcp-clickhouse-cloud = "mcp_clickhouse_cloud.main:main"
 
 [project.urls]
 Homepage = "https://github.com/oualib/mcp-clickhouse-cloud"
@@ -76,13 +76,13 @@ docs = [
 ]
 
 [project.entry-points."mcp.servers"]
-clickhouse = "mcp_clickhouse.main:main"
+clickhouse = "mcp_clickhouse_cloud.main:main"
 
 [tool.hatch.build.targets.wheel]
-packages = ["mcp_clickhouse"]
+packages = ["mcp_clickhouse_cloud"]
 
 [tool.hatch.version]
-path = "mcp_clickhouse/__init__.py"
+path = "mcp_clickhouse_cloud/__init__.py"
 
 [tool.ruff]
 line-length = 100
@@ -162,7 +162,7 @@ ignore = [
 [tool.ruff.lint.isort]
 force-single-line = true
 lines-after-imports = 2
-known-first-party = ["mcp_clickhouse"]
+known-first-party = ["mcp_clickhouse_cloud"]
 
 [tool.ruff.format]
 quote-style = "double"
@@ -201,7 +201,7 @@ addopts = [
     "--strict-markers",
     "--strict-config",
     "--verbose",
-    "--cov=mcp_clickhouse",
+    "--cov=mcp_clickhouse_cloud",
     "--cov-report=term-missing",
     "--cov-report=html",
     "--cov-report=xml",
@@ -214,7 +214,7 @@ markers = [
 ]
 
 [tool.coverage.run]
-source = ["mcp_clickhouse"]
+source = ["mcp_clickhouse_cloud"]
 omit = [
     "tests/*",
     "*/test_*",

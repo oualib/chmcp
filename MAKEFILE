@@ -1,4 +1,4 @@
-# MCP ClickHouse Test and Development Commands
+# MCP ClickHouse Cloud Test and Development Commands
 
 .PHONY: help install test test-unit test-integration test-slow test-coverage test-watch lint format type-check clean docker-test
 
@@ -68,13 +68,13 @@ format-check:
 
 type-check:
 	@echo "🔍 Running type checks..."
-	uv run mypy mcp_clickhouse
+	uv run mypy mcp_clickhouse_cloud
 	@echo "✅ Type checking complete!"
 
 # Security and quality
 security:
 	@echo "🛡️ Running security checks..."
-	uv run bandit -r mcp_clickhouse/ -f json -o bandit-report.json
+	uv run bandit -r mcp_clickhouse_cloud/ -f json -o bandit-report.json
 	@echo "📄 Security report generated: bandit-report.json"
 
 # Build and package
@@ -91,11 +91,11 @@ build-check:
 # Docker operations
 docker-build:
 	@echo "🐳 Building Docker image..."
-	docker build -t mcp-clickhouse:test .
+	docker build -t mcp-clickhouse-cloud:test .
 
 docker-test: docker-build
 	@echo "🧪 Testing Docker image..."
-	docker run --rm mcp-clickhouse:test python -c "import mcp_clickhouse; print('✅ Docker image works!')"
+	docker run --rm mcp-clickhouse-cloud:test python -c "import mcp_clickhouse_cloud; print('✅ Docker image works!')"
 
 # Database setup for testing
 setup-test-db:

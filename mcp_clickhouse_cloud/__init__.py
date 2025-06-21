@@ -1,4 +1,4 @@
-"""MCP ClickHouse Server Package.
+"""MCP ClickHouse Cloud Server Package.
 
 This package provides a Model Context Protocol (MCP) server for ClickHouse database operations
 and ClickHouse Cloud management. It exposes tools for listing databases, tables, running SELECT

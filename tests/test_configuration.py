@@ -3,8 +3,8 @@
 import pytest
 import os
 from unittest.mock import patch
-from mcp_clickhouse.mcp_env import ClickHouseConfig, ConfigManager
-from mcp_clickhouse.cloud_config import ClickHouseCloudConfig
+from mcp_clickhouse_cloud.mcp_env import ClickHouseConfig, ConfigManager
+from mcp_clickhouse_cloud.cloud_config import ClickHouseCloudConfig
 
 
 class TestDatabaseConfiguration:
