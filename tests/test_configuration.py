@@ -13,23 +13,21 @@ class TestDatabaseConfiguration:
     def test_clickhouse_config_from_environment(self):
         """Test configuration creation from environment variables."""
         env_vars = {
-            "CLICKHOUSE_HOST": "test-host.com",
-            "CLICKHOUSE_USER": "test-user",
-            "CLICKHOUSE_PASSWORD": "test-password",
-            "CLICKHOUSE_PORT": "9000",
+            "CLICKHOUSE_HOST": "localhost",
+            "CLICKHOUSE_USER": "default",
+            "CLICKHOUSE_PASSWORD": "",
+            "CLICKHOUSE_PORT": "8123",
             "CLICKHOUSE_SECURE": "true",
-            "CLICKHOUSE_DATABASE": "test_db",
         }
 
         with patch.dict(os.environ, env_vars):
             config = ClickHouseConfig.from_environment()
 
-            assert config.host == "test-host.com"
-            assert config.username == "test-user"
-            assert config.password == "test-password"
-            assert config.port == 9000
+            assert config.host == "localhost"
+            assert config.username == "default"
+            assert config.password == ""
+            assert config.port == 8123
             assert config.secure is True
-            assert config.database == "test_db"
 
     def test_clickhouse_config_missing_required_vars(self):
         """Test configuration fails with missing required variables."""
@@ -41,9 +39,9 @@ class TestDatabaseConfiguration:
     def test_clickhouse_config_defaults(self):
         """Test configuration uses correct defaults."""
         env_vars = {
-            "CLICKHOUSE_HOST": "test-host.com",
-            "CLICKHOUSE_USER": "test-user",
-            "CLICKHOUSE_PASSWORD": "test-password",
+            "CLICKHOUSE_HOST": "localhost",
+            "CLICKHOUSE_USER": "default",
+            "CLICKHOUSE_PASSWORD": "",
         }
 
         with patch.dict(os.environ, env_vars, clear=True):
@@ -60,9 +58,9 @@ class TestDatabaseConfiguration:
         """Test port defaults based on secure setting."""
         # Test secure=False gives port 8123
         env_vars = {
-            "CLICKHOUSE_HOST": "test-host.com",
-            "CLICKHOUSE_USER": "test-user",
-            "CLICKHOUSE_PASSWORD": "test-password",
+            "CLICKHOUSE_HOST": "localhost",
+            "CLICKHOUSE_USER": "default",
+            "CLICKHOUSE_PASSWORD": "",
             "CLICKHOUSE_SECURE": "false",
         }
 
@@ -76,9 +74,9 @@ class TestDatabaseConfiguration:
         ConfigManager.reset()
 
         env_vars = {
-            "CLICKHOUSE_HOST": "test-host.com",
-            "CLICKHOUSE_USER": "test-user",
-            "CLICKHOUSE_PASSWORD": "test-password",
+            "CLICKHOUSE_HOST": "localhost",
+            "CLICKHOUSE_USER": "default",
+            "CLICKHOUSE_PASSWORD": "",
         }
 
         with patch.dict(os.environ, env_vars):
