@@ -1,10 +1,20 @@
 # MCP ClickHouse Cloud Server
 
 [![PyPI - Version](https://img.shields.io/pypi/v/mcp-clickhouse-cloud)](https://pypi.org/project/mcp-clickhouse-cloud)
+[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 
 A comprehensive Model Context Protocol (MCP) server for ClickHouse database operations and ClickHouse Cloud management.
 
-<a href="https://glama.ai/mcp/servers/yvjy4csvo1"><img width="380" height="200" src="https://glama.ai/mcp/servers/yvjy4csvo1/badge" alt="mcp-clickhouse-cloud MCP server" /></a>
+## Why This Server?
+
+This repository is a significant improvement over the [original ClickHouse MCP server](https://github.com/ClickHouse/mcp-clickhouse). While the original server only supports basic database operations (list databases, run SELECT queries, and list tables), this enhanced version provides:
+
+- **50+ Cloud Management Tools**: Complete ClickHouse Cloud API integration for organizations, services, API keys, members, backups, and more
+- **Superior Code Quality**: Well-structured, maintainable codebase with proper error handling and type hints
+- **Enhanced Database Operations**: Extended functionality with metadata access and safety guarantees
+- **Production Ready**: Comprehensive configuration options, SSL support, and robust error handling
 
 ## Features
 
@@ -145,6 +155,12 @@ CLICKHOUSE_DATABASE=default                 # Default database to use
 CLICKHOUSE_PROXY_PATH=                      # Path for HTTP proxy
 ```
 
+#### SSL Configuration Issues
+If you encounter SSL certificate verification issues, you can disable SSL verification:
+```bash
+CLICKHOUSE_VERIFY=false                     # Disable SSL certificate verification
+```
+
 ### Cloud API Configuration (Required for cloud tools)
 ```bash
 # Required - Get these from ClickHouse Cloud Console
@@ -154,6 +170,13 @@ CLICKHOUSE_CLOUD_KEY_SECRET=your-cloud-key-secret
 # Optional
 CLICKHOUSE_CLOUD_API_URL=https://api.clickhouse.cloud
 CLICKHOUSE_CLOUD_TIMEOUT=30
+CLICKHOUSE_CLOUD_SSL_VERIFY=true           # Set to "false" for SSL issues
+```
+
+#### Cloud API SSL Configuration Issues
+If you encounter SSL certificate verification issues with the Cloud API:
+```bash
+CLICKHOUSE_CLOUD_SSL_VERIFY=false          # Disable SSL certificate verification for Cloud API
 ```
 
 ### Example Configurations
@@ -361,20 +384,18 @@ cloud_update_service_state(
 - Verify `CLICKHOUSE_HOST`, `CLICKHOUSE_USER`, and `CLICKHOUSE_PASSWORD`
 - Check network connectivity to ClickHouse server
 - Ensure firewall allows connections on the specified port
+- For SSL issues, try setting `CLICKHOUSE_VERIFY=false`
 
 ### Cloud API Issues  
 - Verify `CLICKHOUSE_CLOUD_KEY_ID` and `CLICKHOUSE_CLOUD_KEY_SECRET`
 - Check API key permissions in ClickHouse Cloud Console
 - Ensure API key is not expired or disabled
+- For SSL issues, try setting `CLICKHOUSE_CLOUD_SSL_VERIFY=false`
 
 ### Missing Tools
 - Database tools require database configuration
 - Cloud tools require cloud API configuration
 - Check logs for import errors or missing dependencies
-
-## YouTube Overview
-
-[![YouTube](http://i.ytimg.com/vi/y9biAm_Fkqw/hqdefault.jpg)](https://www.youtube.com/watch?v=y9biAm_Fkqw)
 
 ## License
 
