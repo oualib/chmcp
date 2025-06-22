@@ -19,7 +19,7 @@ except ImportError:
     # Cloud tools are optional if cloud dependencies aren't available
     pass
 
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 __author__ = "Badr Ouali"
 
 __all__ = [
