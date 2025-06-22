@@ -1,4 +1,4 @@
-"""MCP ClickHouse Cloud Server Package.
+"""MCP ClickHouse Cloud & On-Prem Server Package.
 
 This package provides a Model Context Protocol (MCP) server for ClickHouse database operations
 and ClickHouse Cloud management. It exposes tools for listing databases, tables, running SELECT
@@ -19,7 +19,7 @@ except ImportError:
     # Cloud tools are optional if cloud dependencies aren't available
     pass
 
-__version__ = "0.1.2"
+__version__ = "0.1.0"
 __author__ = "Badr Ouali"
 
 __all__ = [

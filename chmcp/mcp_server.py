@@ -1,7 +1,7 @@
 # Copyright 2025 Badr Ouali
 # SPDX-License-Identifier: Apache-2.0
 
-"""MCP ClickHouse Cloud Server Implementation.
+"""MCP ClickHouse Cloud & On-Prem Server Implementation.
 
 This module provides the FastMCP server implementation for ClickHouse database operations
 and ClickHouse Cloud API operations. It includes tools for both direct database access
@@ -20,7 +20,7 @@ from clickhouse_connect.driver.binding import format_query_value
 from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
 
-from mcp_clickhouse_cloud.mcp_env import get_config
+from chmcp.mcp_env import get_config
 
 
 # Data models
@@ -78,7 +78,7 @@ class ErrorResult:
 
 
 # Constants
-MCP_SERVER_NAME = "mcp-clickhouse-cloud"
+MCP_SERVER_NAME = "chmcp"
 SELECT_QUERY_TIMEOUT_SECS = 30
 MAX_QUERY_WORKERS = 10
 

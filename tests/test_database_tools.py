@@ -2,7 +2,7 @@
 
 import pytest
 from unittest.mock import patch, Mock, MagicMock
-from mcp_clickhouse_cloud import (
+from chmcp import (
     list_databases,
     list_tables,
     run_select_query,
@@ -13,7 +13,7 @@ from mcp_clickhouse_cloud import (
 class TestDatabaseTools:
     """Test suite for database operation tools."""
 
-    @patch("mcp_clickhouse_cloud.mcp_server.clickhouse_connect.get_client")
+    @patch("chmcp.mcp_server.clickhouse_connect.get_client")
     def test_create_clickhouse_client_success(self, mock_get_client, clickhouse_config):
         """Test successful ClickHouse client creation."""
         # Setup mock
@@ -29,7 +29,7 @@ class TestDatabaseTools:
 
     def test_create_clickhouse_client_failure(self):
         """Test ClickHouse client creation with invalid config."""
-        with patch("mcp_clickhouse_cloud.mcp_env.get_config") as mock_config:
+        with patch("chmcp.mcp_env.get_config") as mock_config:
             mock_config.return_value.get_client_config.return_value = {
                 "host": "invalid-host",
                 "port": 9999,
@@ -56,7 +56,7 @@ class TestDatabaseTools:
 
     def test_list_databases_connection_error(self):
         """Test list_databases with connection error."""
-        with patch("mcp_clickhouse_cloud.mcp_server.create_clickhouse_client") as mock_client:
+        with patch("chmcp.mcp_server.create_clickhouse_client") as mock_client:
             mock_client.side_effect = Exception("Connection failed")
 
             with pytest.raises(Exception, match="Connection failed"):
@@ -198,8 +198,8 @@ class TestDatabaseTools:
         """Test SELECT query timeout handling."""
         # This test simulates a long-running query
         # In a real scenario, you'd use a query that takes longer than the timeout
-        with patch("mcp_clickhouse_cloud.mcp_server.SELECT_QUERY_TIMEOUT_SECS", 0.1):
-            with patch("mcp_clickhouse_cloud.mcp_server.execute_query") as mock_execute:
+        with patch("chmcp.mcp_server.SELECT_QUERY_TIMEOUT_SECS", 0.1):
+            with patch("chmcp.mcp_server.execute_query") as mock_execute:
                 import time
 
                 def slow_query(query):

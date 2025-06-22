@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Test runner script for MCP ClickHouse Cloud.
+Test runner script for MCP ClickHouse Cloud & On-Prem.
 
 This script provides a convenient way to run different types of tests
 with proper environment setup and reporting.
@@ -51,7 +51,7 @@ def check_clickhouse_connection() -> bool:
 
 def main():
     """Main test runner function."""
-    parser = argparse.ArgumentParser(description="MCP ClickHouse Cloud Test Runner")
+    parser = argparse.ArgumentParser(description="MCP ClickHouse Cloud & On-Prem Test Runner")
     parser.add_argument(
         "test_type",
         choices=["unit", "integration", "cloud", "all", "coverage", "lint", "format", "type"],
@@ -70,7 +70,7 @@ def main():
     project_root = Path(__file__).parent.parent
     os.chdir(project_root)
 
-    print("🧪 MCP ClickHouse Cloud Test Runner")
+    print("🧪 MCP ClickHouse Cloud & On-Prem Test Runner")
     print(f"📁 Project root: {project_root}")
     print(f"🎯 Test type: {args.test_type}")
     print()
@@ -100,7 +100,7 @@ def main():
 
     elif args.test_type == "type":
         success &= run_command(
-            ["uv", "run", "mypy", "mcp_clickhouse_cloud"], "Type checking with MyPy"
+            ["uv", "run", "mypy", "chmcp"], "Type checking with MyPy"
         )
 
     elif args.test_type == "unit":
@@ -129,7 +129,7 @@ def main():
 
     elif args.test_type == "coverage":
         cmd = pytest_cmd + [
-            "--cov=mcp_clickhouse_cloud",
+            "--cov=chmcp",
             "--cov-report=term-missing",
             "--cov-report=html",
             "--cov-branch",
@@ -149,7 +149,7 @@ def main():
         success &= run_command(["uv", "run", "ruff", "format", "--check", "."], "Format checking")
 
         # Type check
-        success &= run_command(["uv", "run", "mypy", "mcp_clickhouse_cloud"], "Type checking")
+        success &= run_command(["uv", "run", "mypy", "chmcp"], "Type checking")
 
         # Unit tests
         cmd = pytest_cmd + ["-m", "not integration and not slow"]

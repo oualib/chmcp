@@ -11,7 +11,7 @@ class TestIntegration:
     @pytest.mark.skip(reason="Requires live ClickHouse connection")
     def test_clickhouse_playground_connection(self):
         """Test connection to ClickHouse SQL Playground."""
-        from mcp_clickhouse_cloud.mcp_env import ClickHouseConfig
+        from chmcp.mcp_env import ClickHouseConfig
         import os
 
         # Override config for playground
@@ -26,7 +26,7 @@ class TestIntegration:
                 "CLICKHOUSE_VERIFY": "true",
             },
         ):
-            from mcp_clickhouse_cloud import create_clickhouse_client, run_select_query
+            from chmcp import create_clickhouse_client, run_select_query
 
             # Test basic connection
             client = create_clickhouse_client()
@@ -41,7 +41,7 @@ class TestIntegration:
     @pytest.mark.slow
     def test_large_query_performance(self, clickhouse_client, test_database):
         """Test performance with larger datasets."""
-        from mcp_clickhouse_cloud import run_select_query
+        from chmcp import run_select_query
 
         # Create a larger test table
         large_table = "performance_test_table"

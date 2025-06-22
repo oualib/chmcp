@@ -2,7 +2,7 @@
 
 import pytest
 from unittest.mock import Mock, patch
-from mcp_clickhouse_cloud.cloud_client import CloudAPIResponse, CloudAPIError
+from chmcp.cloud_client import CloudAPIResponse, CloudAPIError
 
 
 class TestCloudTools:
@@ -10,7 +10,7 @@ class TestCloudTools:
 
     def test_cloud_list_organizations_success(self, mock_cloud_client):
         """Test successful organization listing."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_list_organizations
+        from chmcp.cloud_tools import cloud_list_organizations
 
         # Mock successful response
         mock_response = CloudAPIResponse(
@@ -30,7 +30,7 @@ class TestCloudTools:
 
     def test_cloud_list_organizations_error(self, mock_cloud_client):
         """Test organization listing with API error."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_list_organizations
+        from chmcp.cloud_tools import cloud_list_organizations
 
         # Mock error response
         mock_error = CloudAPIError(status=401, error="Unauthorized", request_id="test-request-456")
@@ -44,7 +44,7 @@ class TestCloudTools:
 
     def test_cloud_get_organization(self, mock_cloud_client):
         """Test getting specific organization details."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_get_organization
+        from chmcp.cloud_tools import cloud_get_organization
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -62,7 +62,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_update_organization(self, mock_cloud_client):
         """Test updating organization details."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_update_organization
+        from chmcp.cloud_tools import cloud_update_organization
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -83,7 +83,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_get_organization_private_endpoint_info(self, mock_cloud_client):
         """Test getting organization private endpoint info."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_get_organization_private_endpoint_info
+        from chmcp.cloud_tools import cloud_get_organization_private_endpoint_info
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -103,7 +103,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_get_organization_metrics(self, mock_cloud_client):
         """Test getting organization metrics."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_get_organization_metrics
+        from chmcp.cloud_tools import cloud_get_organization_metrics
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -121,7 +121,7 @@ class TestCloudTools:
 
     def test_cloud_list_services(self, mock_cloud_client):
         """Test listing services in an organization."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_list_services
+        from chmcp.cloud_tools import cloud_list_services
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -148,7 +148,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_get_service(self, mock_cloud_client):
         """Test getting service details."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_get_service
+        from chmcp.cloud_tools import cloud_get_service
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -167,7 +167,7 @@ class TestCloudTools:
 
     def test_cloud_create_service(self, mock_cloud_client):
         """Test creating a new service."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_create_service
+        from chmcp.cloud_tools import cloud_create_service
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -198,7 +198,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_update_service(self, mock_cloud_client):
         """Test updating service details."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_update_service
+        from chmcp.cloud_tools import cloud_update_service
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -218,7 +218,7 @@ class TestCloudTools:
 
     def test_cloud_update_service_state(self, mock_cloud_client):
         """Test updating service state."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_update_service_state
+        from chmcp.cloud_tools import cloud_update_service_state
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -239,7 +239,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_update_service_scaling(self, mock_cloud_client):
         """Test updating service scaling (deprecated method)."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_update_service_scaling
+        from chmcp.cloud_tools import cloud_update_service_scaling
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -261,7 +261,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_update_service_replica_scaling(self, mock_cloud_client):
         """Test updating service replica scaling (preferred method)."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_update_service_replica_scaling
+        from chmcp.cloud_tools import cloud_update_service_replica_scaling
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -283,7 +283,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_update_service_password(self, mock_cloud_client):
         """Test updating service password."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_update_service_password
+        from chmcp.cloud_tools import cloud_update_service_password
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -303,7 +303,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_create_service_private_endpoint(self, mock_cloud_client):
         """Test creating service private endpoint."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_create_service_private_endpoint
+        from chmcp.cloud_tools import cloud_create_service_private_endpoint
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -325,7 +325,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_get_service_metrics(self, mock_cloud_client):
         """Test getting service metrics."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_get_service_metrics
+        from chmcp.cloud_tools import cloud_get_service_metrics
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -344,7 +344,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_delete_service(self, mock_cloud_client):
         """Test deleting service."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_delete_service
+        from chmcp.cloud_tools import cloud_delete_service
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -364,7 +364,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_get_query_endpoint_config(self, mock_cloud_client):
         """Test getting query endpoint configuration."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_get_query_endpoint_config
+        from chmcp.cloud_tools import cloud_get_query_endpoint_config
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -384,7 +384,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_create_query_endpoint_config(self, mock_cloud_client):
         """Test creating query endpoint configuration."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_create_query_endpoint_config
+        from chmcp.cloud_tools import cloud_create_query_endpoint_config
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -404,7 +404,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_delete_query_endpoint_config(self, mock_cloud_client):
         """Test deleting query endpoint configuration."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_delete_query_endpoint_config
+        from chmcp.cloud_tools import cloud_delete_query_endpoint_config
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -424,7 +424,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_list_api_keys(self, mock_cloud_client):
         """Test listing API keys."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_list_api_keys
+        from chmcp.cloud_tools import cloud_list_api_keys
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -441,7 +441,7 @@ class TestCloudTools:
 
     def test_cloud_create_api_key(self, mock_cloud_client):
         """Test creating an API key."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_create_api_key
+        from chmcp.cloud_tools import cloud_create_api_key
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -470,7 +470,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_get_api_key(self, mock_cloud_client):
         """Test getting specific API key details."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_get_api_key
+        from chmcp.cloud_tools import cloud_get_api_key
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -488,7 +488,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_update_api_key(self, mock_cloud_client):
         """Test updating API key properties."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_update_api_key
+        from chmcp.cloud_tools import cloud_update_api_key
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -508,7 +508,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_delete_api_key(self, mock_cloud_client):
         """Test deleting API key."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_delete_api_key
+        from chmcp.cloud_tools import cloud_delete_api_key
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -526,7 +526,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_list_members(self, mock_cloud_client):
         """Test listing organization members."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_list_members
+        from chmcp.cloud_tools import cloud_list_members
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -545,7 +545,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_get_member(self, mock_cloud_client):
         """Test getting specific member details."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_get_member
+        from chmcp.cloud_tools import cloud_get_member
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -563,7 +563,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_update_member_role(self, mock_cloud_client):
         """Test updating member role."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_update_member_role
+        from chmcp.cloud_tools import cloud_update_member_role
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -584,7 +584,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_remove_member(self, mock_cloud_client):
         """Test removing organization member."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_remove_member
+        from chmcp.cloud_tools import cloud_remove_member
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -604,7 +604,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_list_invitations(self, mock_cloud_client):
         """Test listing organization invitations."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_list_invitations
+        from chmcp.cloud_tools import cloud_list_invitations
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -622,7 +622,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_create_invitation(self, mock_cloud_client):
         """Test creating organization invitation."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_create_invitation
+        from chmcp.cloud_tools import cloud_create_invitation
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -643,7 +643,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_get_invitation(self, mock_cloud_client):
         """Test getting specific invitation details."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_get_invitation
+        from chmcp.cloud_tools import cloud_get_invitation
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -663,7 +663,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_delete_invitation(self, mock_cloud_client):
         """Test deleting organization invitation."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_delete_invitation
+        from chmcp.cloud_tools import cloud_delete_invitation
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -683,7 +683,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_list_backups(self, mock_cloud_client):
         """Test listing service backups."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_list_backups
+        from chmcp.cloud_tools import cloud_list_backups
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -704,7 +704,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_get_backup(self, mock_cloud_client):
         """Test getting backup details."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_get_backup
+        from chmcp.cloud_tools import cloud_get_backup
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -724,7 +724,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_get_backup_configuration(self, mock_cloud_client):
         """Test getting backup configuration."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_get_backup_configuration
+        from chmcp.cloud_tools import cloud_get_backup_configuration
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -744,7 +744,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_update_backup_configuration(self, mock_cloud_client):
         """Test updating backup configuration."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_update_backup_configuration
+        from chmcp.cloud_tools import cloud_update_backup_configuration
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -769,7 +769,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_list_activities(self, mock_cloud_client):
         """Test listing organization activities."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_list_activities
+        from chmcp.cloud_tools import cloud_list_activities
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -797,7 +797,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_get_activity(self, mock_cloud_client):
         """Test getting activity details."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_get_activity
+        from chmcp.cloud_tools import cloud_get_activity
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -818,7 +818,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_get_usage_cost(self, mock_cloud_client):
         """Test getting usage cost data."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_get_usage_cost
+        from chmcp.cloud_tools import cloud_get_usage_cost
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -841,7 +841,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_get_private_endpoint_config(self, mock_cloud_client):
         """Test getting private endpoint configuration."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_get_private_endpoint_config
+        from chmcp.cloud_tools import cloud_get_private_endpoint_config
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -862,7 +862,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_list_reverse_private_endpoints(self, mock_cloud_client):
         """Test listing reverse private endpoints."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_list_reverse_private_endpoints
+        from chmcp.cloud_tools import cloud_list_reverse_private_endpoints
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -882,7 +882,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_create_reverse_private_endpoint(self, mock_cloud_client):
         """Test creating reverse private endpoint."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_create_reverse_private_endpoint
+        from chmcp.cloud_tools import cloud_create_reverse_private_endpoint
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -911,7 +911,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_get_reverse_private_endpoint(self, mock_cloud_client):
         """Test getting reverse private endpoint details."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_get_reverse_private_endpoint
+        from chmcp.cloud_tools import cloud_get_reverse_private_endpoint
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -931,7 +931,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_delete_reverse_private_endpoint(self, mock_cloud_client):
         """Test deleting reverse private endpoint."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_delete_reverse_private_endpoint
+        from chmcp.cloud_tools import cloud_delete_reverse_private_endpoint
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -951,7 +951,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_list_clickpipes(self, mock_cloud_client):
         """Test listing ClickPipes."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_list_clickpipes
+        from chmcp.cloud_tools import cloud_list_clickpipes
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -972,7 +972,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_create_clickpipe(self, mock_cloud_client):
         """Test creating a ClickPipe."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_create_clickpipe
+        from chmcp.cloud_tools import cloud_create_clickpipe
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -1002,7 +1002,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_get_clickpipe(self, mock_cloud_client):
         """Test getting ClickPipe details."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_get_clickpipe
+        from chmcp.cloud_tools import cloud_get_clickpipe
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -1022,7 +1022,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_update_clickpipe(self, mock_cloud_client):
         """Test updating a ClickPipe."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_update_clickpipe
+        from chmcp.cloud_tools import cloud_update_clickpipe
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -1044,7 +1044,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_update_clickpipe_scaling(self, mock_cloud_client):
         """Test updating ClickPipe scaling."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_update_clickpipe_scaling
+        from chmcp.cloud_tools import cloud_update_clickpipe_scaling
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -1065,7 +1065,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_update_clickpipe_state(self, mock_cloud_client):
         """Test updating ClickPipe state."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_update_clickpipe_state
+        from chmcp.cloud_tools import cloud_update_clickpipe_state
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -1089,7 +1089,7 @@ class TestCloudTools:
     @pytest.mark.skip(reason="Requires live ClickHouse Cloud API credentials")
     def test_cloud_delete_clickpipe(self, mock_cloud_client):
         """Test deleting ClickPipe."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_delete_clickpipe
+        from chmcp.cloud_tools import cloud_delete_clickpipe
 
         mock_response = CloudAPIResponse(
             status=200,
@@ -1108,7 +1108,7 @@ class TestCloudTools:
     # Utility Tests
     def test_cloud_get_available_regions(self):
         """Test getting available regions (static data)."""
-        from mcp_clickhouse_cloud.cloud_tools import cloud_get_available_regions
+        from chmcp.cloud_tools import cloud_get_available_regions
 
         result = cloud_get_available_regions()
 
@@ -1131,7 +1131,7 @@ class TestCloudTools:
     # Error handling tests
     def test_handle_api_response_error(self):
         """Test error response handling."""
-        from mcp_clickhouse_cloud.cloud_tools import _handle_api_response
+        from chmcp.cloud_tools import _handle_api_response
 
         error = CloudAPIError(status=404, error="Not Found", request_id="error-request")
         result = _handle_api_response(error)
@@ -1143,7 +1143,7 @@ class TestCloudTools:
 
     def test_handle_api_response_success(self):
         """Test success response handling."""
-        from mcp_clickhouse_cloud.cloud_tools import _handle_api_response
+        from chmcp.cloud_tools import _handle_api_response
 
         response = CloudAPIResponse(
             status=200, request_id="success-request", result={"data": "test"}
