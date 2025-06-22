@@ -163,7 +163,7 @@ By the end of this tutorial, you'll have Claude configured to:
 
 > **🔑 Why do we need UV?**
 > 
-> UV is a fast Python package manager that Claude Desktop uses to install and run the MCP ClickHouse Cloud server. It ensures clean, isolated environments and fast package resolution.
+> UV is a fast Python package manager that Claude Desktop uses to install and run the MCP ClickHouse Cloud & On-Prem server. It ensures clean, isolated environments and fast package resolution.
 
 ### Step 1: Install Python 3.13
 
@@ -294,15 +294,15 @@ After installation, you need to find the exact path to the UV executable:
    ```json
    {
      "mcpServers": {
-       "mcp-clickhouse-cloud": {
+       "chmcp": {
          "command": "/full/path/to/uv",
          "args": [
            "run",
            "--with",
-           "mcp-clickhouse-cloud",
+           "chmcp",
            "--python",
            "3.13",
-           "mcp-clickhouse-cloud"
+           "chmcp"
          ],
          "env": {
            "CLICKHOUSE_HOST": "your-service.region.provider.clickhouse.cloud",
@@ -346,15 +346,15 @@ If you're using your own ClickHouse server, use this configuration instead:
 ```json
 {
   "mcpServers": {
-    "mcp-clickhouse-cloud": {
+    "chmcp": {
       "command": "/full/path/to/uv",
       "args": [
         "run",
         "--with",
-        "mcp-clickhouse-cloud",
+        "chmcp",
         "--python",
         "3.13",
-        "mcp-clickhouse-cloud"
+        "chmcp"
       ],
       "env": {
         "CLICKHOUSE_HOST": "your-clickhouse-server.com",
@@ -401,15 +401,15 @@ If you're using your own ClickHouse server, use this configuration instead:
    ```json
    {
      "mcpServers": {
-       "mcp-clickhouse-cloud": {
+       "chmcp": {
          "command": "/Library/Frameworks/Python.framework/Versions/3.13/bin/uv",
          "args": [
            "run",
            "--with", 
-           "mcp-clickhouse-cloud",
+           "chmcp",
            "--python",
            "3.13",
-           "mcp-clickhouse-cloud"
+           "chmcp"
          ],
          "env": {
            "CLICKHOUSE_HOST": "abc123.us-east-1.aws.clickhouse.cloud",
@@ -432,15 +432,15 @@ If you're using your own ClickHouse server, use this configuration instead:
    ```json
    {
      "mcpServers": {
-       "mcp-clickhouse-cloud": {
+       "chmcp": {
          "command": "/full/path/to/uv",
          "args": [
            "run",
            "--directory",
-           "/Users/yourname/path/to/mcp-clickhouse-cloud/mcp_clickhouse_cloud",
+           "/Users/yourname/path/to/chmcp/chmcp",
            "python",
            "-m",
-           "mcp_clickhouse_cloud.main"
+           "chmcp.main"
          ],
          "env": {
            // ... your environment variables here
@@ -451,9 +451,9 @@ If you're using your own ClickHouse server, use this configuration instead:
    ```
    
    **Replace the directory path with your local repository path:**
-   - Clone the repository: `git clone https://github.com/your-repo/mcp-clickhouse-cloud.git`
-   - Use the full path to the `mcp_clickhouse_cloud` folder in your clone
-   - Example: `/Users/badrouali/Documents/GitHub/mcp-clickhouse-cloud/mcp_clickhouse_cloud`
+   - Clone the repository: `git clone https://github.com/your-repo/chmcp.git`
+   - Use the full path to the `chmcp` folder in your clone
+   - Example: `/Users/badrouali/Documents/GitHub/chmcp/chmcp`
    
    This is useful for:
    - Testing modifications to the source code
@@ -654,7 +654,7 @@ Your data is now just a conversation away! Start exploring and discover insights
 **🔗 Useful Links**
 - [ClickHouse Documentation](https://clickhouse.com/docs)
 - [Claude Desktop Download](https://claude.ai/download)
-- [MCP ClickHouse Cloud Repository](https://github.com/your-repo)
+- [MCP ClickHouse Cloud & On-Prem Repository](https://github.com/your-repo)
 - [ClickHouse Cloud Console](https://console.clickhouse.cloud)
 
 **📧 Questions?**

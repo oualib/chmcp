@@ -1,6 +1,6 @@
-# MCP ClickHouse Cloud Server
+# MCP ClickHouse Cloud & On-Prem Server
 
-[![PyPI - Version](https://img.shields.io/pypi/v/mcp-clickhouse-cloud)](https://pypi.org/project/mcp-clickhouse-cloud)
+[![PyPI - Version](https://img.shields.io/pypi/v/chmcp)](https://pypi.org/project/chmcp)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
@@ -109,15 +109,15 @@ Complete coverage of the ClickHouse Cloud API including:
 ```json
 {
   "mcpServers": {
-    "mcp-clickhouse-cloud": {
+    "chmcp": {
       "command": "uv",
       "args": [
         "run",
         "--with",
-        "mcp-clickhouse-cloud",
+        "chmcp",
         "--python",
         "3.13",
-        "mcp-clickhouse-cloud"
+        "chmcp"
       ],
       "env": {
         "CLICKHOUSE_HOST": "",
@@ -138,15 +138,15 @@ Complete coverage of the ClickHouse Cloud API including:
 ```json
 {
   "mcpServers": {
-    "mcp-clickhouse-cloud": {
+    "chmcp": {
       "command": "uv",
       "args": [
         "run",
         "--with",
-        "mcp-clickhouse-cloud",
+        "chmcp",
         "--python",
         "3.13",
-        "mcp-clickhouse-cloud"
+        "chmcp"
       ],
       "env": {
         "CLICKHOUSE_HOST": "sql-clickhouse.clickhouse.com",
@@ -172,14 +172,14 @@ Complete coverage of the ClickHouse Cloud API including:
 ### Option 1: Using uv (Recommended)
 ```bash
 # Install via uv (used by Claude Desktop)
-uv add mcp-clickhouse-cloud
+uv add chmcp
 ```
 
 ### Option 2: Manual Installation
 ```bash
 # Clone the repository
 git clone 
-cd mcp-clickhouse-cloud
+cd chmcp
 
 # Install dependencies
 pip install -r requirements.txt
@@ -466,9 +466,9 @@ cloud_update_clickpipe_state(
 
 4. **Run the MCP server**:
    ```bash
-   mcp dev mcp_clickhouse_cloud/mcp_server.py  # Start for testing
+   mcp dev chmcp/mcp_server.py  # Start for testing
    # OR
-   python -m mcp_clickhouse_cloud.main         # Start normally
+   python -m chmcp.main         # Start normally
    ```
 
 ### Running Tests
@@ -484,7 +484,7 @@ uv run pytest tests                     # Run tests
 ## Project Structure
 
 ```
-mcp_clickhouse_cloud/
+chmcp/
 ├── __init__.py                 # Package initialization
 ├── main.py                     # Entry point
 ├── mcp_env.py                  # Database environment configuration

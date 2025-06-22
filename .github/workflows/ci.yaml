@@ -51,7 +51,7 @@ jobs:
         continue-on-error: true # Allow to fail for now
 
       - name: Type check with mypy
-        run: uv run mypy mcp_clickhouse_cloud
+        run: uv run mypy chmcp
         continue-on-error: true # Allow to fail for now
 
   test:
@@ -115,7 +115,7 @@ jobs:
           CLICKHOUSE_SEND_RECEIVE_TIMEOUT: "30"
         run: |
           uv run pytest tests/ -v \
-            --cov=mcp_clickhouse_cloud \
+            --cov=chmcp \
             --cov-report=term-missing \
             --cov-report=xml \
             --junit-xml=test-results.xml
@@ -158,7 +158,7 @@ jobs:
         run: uv sync --dev
 
       - name: Run security checks with bandit
-        run: uv run bandit -r mcp_clickhouse_cloud/ -f json -o bandit-report.json
+        run: uv run bandit -r chmcp/ -f json -o bandit-report.json
         continue-on-error: true
 
       - name: Upload security scan results
@@ -184,7 +184,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: mcp-clickhouse-cloud
+          images: chmcp
           tags: |
             type=ref,event=branch
             type=ref,event=pr
@@ -205,11 +205,11 @@ jobs:
 
       - name: Test Docker image import
         run: |
-          docker run --rm mcp-clickhouse-cloud:test python -c "
-          import mcp_clickhouse_cloud
-          print('✅ MCP ClickHouse Cloud package imports successfully!')
-          print(f'Version: {mcp_clickhouse_cloud.__version__}')
-          print(f'Author: {mcp_clickhouse_cloud.__author__}')
+          docker run --rm chmcp:test python -c "
+          import chmcp
+          print('✅ MCP ClickHouse Cloud & On-Prem package imports successfully!')
+          print(f'Version: {chmcp.__version__}')
+          print(f'Author: {chmcp.__author__}')
           "
 
       - name: Test Docker image health check
@@ -217,8 +217,8 @@ jobs:
           echo "Testing Docker container startup..."
           
           # Test basic container functionality
-          docker run --rm mcp-clickhouse-cloud:test python -c "
-          import mcp_clickhouse_cloud
+          docker run --rm chmcp:test python -c "
+          import chmcp
           print('✅ Container and package work correctly')
           "
           
@@ -226,8 +226,8 @@ jobs:
           timeout 10s docker run --rm \
             -e CLICKHOUSE_HOST=dummy \
             -e CLICKHOUSE_USER=test \
-            mcp-clickhouse-cloud:test \
-            python -c 'from mcp_clickhouse_cloud.main import main; print("✅ Main module loads successfully")' \
+            chmcp:test \
+            python -c 'from chmcp.main import main; print("✅ Main module loads successfully")' \
             || echo "Expected timeout or controlled exit"
 
       - name: Test Docker image with environment variables
@@ -236,9 +236,9 @@ jobs:
             -e CLICKHOUSE_HOST=test-host \
             -e CLICKHOUSE_USER=test-user \
             -e CLICKHOUSE_PASSWORD=test-pass \
-            mcp-clickhouse-cloud:test python -c "
+            chmcp:test python -c "
           import os
-          from mcp_clickhouse_cloud.mcp_env import get_config
+          from chmcp.mcp_env import get_config
           try:
               config = get_config()
               print('✅ Configuration loads successfully with environment variables')
@@ -277,10 +277,10 @@ jobs:
           uv pip install dist/*.whl
           
           # Test import
-          python -c "import mcp_clickhouse_cloud; print('✅ Package installs and imports correctly')"
+          python -c "import chmcp; print('✅ Package installs and imports correctly')"
           
           # Test CLI
-          python -m mcp_clickhouse_cloud.main --help || echo "CLI help displayed"
+          python -m chmcp.main --help || echo "CLI help displayed"
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4

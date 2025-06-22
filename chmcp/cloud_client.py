@@ -60,7 +60,7 @@ class ClickHouseCloudClient:
             {
                 "Content-Type": "application/json",
                 "Accept": "application/json",
-                "User-Agent": "mcp-clickhouse-cloud/1.0.0",
+                "User-Agent": "chmcp/1.0.0",
             }
         )
 

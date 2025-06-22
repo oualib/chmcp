@@ -1,6 +1,6 @@
 [project]
-name = "mcp-clickhouse-cloud"
-version = "0.1.2"
+name = "chmcp"
+version = "0.1.0"
 description = "A comprehensive Model Context Protocol (MCP) server for ClickHouse database operations and ClickHouse Cloud management."
 readme = "README.md"
 license = "Apache-2.0"
@@ -35,7 +35,7 @@ classifiers = [
 ]
 requires-python = ">=3.13"
 dependencies = [
-    "mcp[cli]>=1.3.0",
+    "mcp[cli]>=1.4.0",
     "python-dotenv>=1.0.1",
     "uvicorn>=0.34.0",
     "clickhouse-connect>=0.8.16",
@@ -44,14 +44,14 @@ dependencies = [
 ]
 
 [project.scripts]
-mcp-clickhouse-cloud = "mcp_clickhouse_cloud.main:main"
+chmcp = "chmcp.main:main"
 
 [project.urls]
-Homepage = "https://github.com/oualib/mcp-clickhouse-cloud"
-Repository = "https://github.com/oualib/mcp-clickhouse-cloud"
-Documentation = "https://github.com/oualib/mcp-clickhouse-cloud#readme"
-"Bug Tracker" = "https://github.com/oualib/mcp-clickhouse-cloud/issues"
-Changelog = "https://github.com/oualib/mcp-clickhouse-cloud/releases"
+Homepage = "https://github.com/oualib/chmcp"
+Repository = "https://github.com/oualib/chmcp"
+Documentation = "https://github.com/oualib/chmcp#readme"
+"Bug Tracker" = "https://github.com/oualib/chmcp/issues"
+Changelog = "https://github.com/oualib/chmcp/releases"
 
 [project.optional-dependencies]
 dev = [
@@ -76,13 +76,13 @@ docs = [
 ]
 
 [project.entry-points."mcp.servers"]
-clickhouse = "mcp_clickhouse_cloud.main:main"
+clickhouse = "chmcp.main:main"
 
 [tool.hatch.build.targets.wheel]
-packages = ["mcp_clickhouse_cloud"]
+packages = ["chmcp"]
 
 [tool.hatch.version]
-path = "mcp_clickhouse_cloud/__init__.py"
+path = "chmcp/__init__.py"
 
 [tool.ruff]
 line-length = 100
@@ -162,7 +162,7 @@ ignore = [
 [tool.ruff.lint.isort]
 force-single-line = true
 lines-after-imports = 2
-known-first-party = ["mcp_clickhouse_cloud"]
+known-first-party = ["chmcp"]
 
 [tool.ruff.format]
 quote-style = "double"
@@ -201,7 +201,7 @@ addopts = [
     "--strict-markers",
     "--strict-config",
     "--verbose",
-    "--cov=mcp_clickhouse_cloud",
+    "--cov=chmcp",
     "--cov-report=term-missing",
     "--cov-report=html",
     "--cov-report=xml",
@@ -214,7 +214,7 @@ markers = [
 ]
 
 [tool.coverage.run]
-source = ["mcp_clickhouse_cloud"]
+source = ["chmcp"]
 omit = [
     "tests/*",
     "*/test_*",
