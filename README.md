@@ -7,6 +7,52 @@
 
 A comprehensive Model Context Protocol (MCP) server for ClickHouse database operations and ClickHouse Cloud management.
 
+## 🚀 Quick Start
+
+Start with our step-by-step tutorial:
+
+👉 **[Complete Setup Tutorial](tutorial/README.md)** - Transform Claude into a powerful ClickHouse data agent
+
+For experienced users, jump to the [Quick Configuration](#quick-configuration) section below.
+
+## 📚 Table of Contents
+
+- [🚀 Quick Start](#-quick-start)
+- [📚 Table of Contents](#-table-of-contents)
+- [🌟 Why This Server?](#-why-this-server)
+- [✨ Features](#-features)
+  - [Database Operations](#database-operations)
+  - [ClickHouse Cloud Management (50+ Tools)](#clickhouse-cloud-management-50-tools)
+- [⚡ Quick Configuration](#-quick-configuration)
+  - [Claude Desktop Setup](#claude-desktop-setup)
+  - [For ClickHouse Cloud](#for-clickhouse-cloud)
+  - [For Your Own ClickHouse Server](#for-your-own-clickhouse-server)
+  - [For ClickHouse SQL Playground (Free Testing)](#for-clickhouse-sql-playground-free-testing)
+- [📦 Installation](#-installation)
+  - [Option 1: Using uv (Recommended)](#option-1-using-uv-recommended)
+  - [Option 2: Manual Installation](#option-2-manual-installation)
+- [⚙️ Environment Variables](#️-environment-variables)
+  - [Database Configuration (Required for database tools)](#database-configuration-required-for-database-tools)
+  - [Cloud API Configuration (Required for cloud tools)](#cloud-api-configuration-required-for-cloud-tools)
+  - [Example Configurations](#example-configurations)
+- [🛠️ Available Tools](#️-available-tools)
+  - [Database Tools (3 tools)](#database-tools-3-tools)
+  - [Cloud Tools (50+ tools)](#cloud-tools-50-tools)
+- [💡 Examples](#-examples)
+  - [Query Database](#query-database)
+  - [Manage Cloud Services](#manage-cloud-services)
+- [🔧 Development](#-development)
+  - [Local Development Setup](#local-development-setup)
+  - [Running Tests](#running-tests)
+- [📁 Project Structure](#-project-structure)
+- [🔍 How MCP Tool Discovery Works](#-how-mcp-tool-discovery-works)
+- [🔑 Getting ClickHouse Cloud API Keys](#-getting-clickhouse-cloud-api-keys)
+- [🐛 Troubleshooting](#-troubleshooting)
+  - [Database Connection Issues](#database-connection-issues)
+  - [Cloud API Issues](#cloud-api-issues)
+  - [Missing Tools](#missing-tools)
+- [📄 License](#-license)
+
 ## Why This Server?
 
 This repository is a significant improvement over the [original ClickHouse MCP server](https://github.com/ClickHouse/mcp-clickhouse). While the original server only supports basic database operations (list databases, run SELECT queries, and list tables), this enhanced version provides:
