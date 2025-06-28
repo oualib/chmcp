@@ -5,7 +5,7 @@ from unittest.mock import patch, Mock, MagicMock
 from chmcp import (
     list_databases,
     list_tables,
-    run_select_query,
+    run_query,
     create_clickhouse_client,
 )
 
@@ -132,10 +132,10 @@ class TestDatabaseTools:
             list_tables("nonexistent_database_12345")
 
     @pytest.mark.skip(reason="Requires live ClickHouse connection")
-    def test_run_select_query_success(self, clickhouse_client, test_database, test_table):
+    def test_run_query_success(self, clickhouse_client, test_database, test_table):
         """Test successful SELECT query execution."""
         query = f"SELECT id, name, email FROM {test_database}.{test_table} ORDER BY id"
-        result = run_select_query(query)
+        result = run_query(query)
 
         assert isinstance(result, dict)
         assert result["status"] == "success"
@@ -152,10 +152,10 @@ class TestDatabaseTools:
         assert result["rows"][1] == [2, "Bob Smith", "bob@example.com"]
 
     @pytest.mark.skip(reason="Requires live ClickHouse connection")
-    def test_run_select_query_with_filters(self, clickhouse_client, test_database, test_table):
+    def test_run_query_with_filters(self, clickhouse_client, test_database, test_table):
         """Test SELECT query with WHERE clause."""
         query = f"SELECT name FROM {test_database}.{test_table} WHERE age > 30 ORDER BY name"
-        result = run_select_query(query)
+        result = run_query(query)
 
         assert result["status"] == "success"
         assert len(result["rows"]) == 2
@@ -163,10 +163,10 @@ class TestDatabaseTools:
         assert result["rows"][1][0] == "Charlie Brown"
 
     @pytest.mark.skip(reason="Requires live ClickHouse connection")
-    def test_run_select_query_aggregation(self, clickhouse_client, test_database, test_table):
+    def test_run_query_aggregation(self, clickhouse_client, test_database, test_table):
         """Test SELECT query with aggregation."""
         query = f"SELECT COUNT(*) as total, AVG(age) as avg_age FROM {test_database}.{test_table}"
-        result = run_select_query(query)
+        result = run_query(query)
 
         assert result["status"] == "success"
         assert len(result["rows"]) == 1
@@ -174,10 +174,10 @@ class TestDatabaseTools:
         assert result["rows"][0][1] == 33.75  # AVG(age)
 
     @pytest.mark.skip(reason="Requires live ClickHouse connection")
-    def test_run_select_query_syntax_error(self, clickhouse_client):
+    def test_run_query_syntax_error(self, clickhouse_client):
         """Test SELECT query with syntax error."""
         query = "SELECT * FROMM invalid_syntax"
-        result = run_select_query(query)
+        result = run_query(query)
 
         assert isinstance(result, dict)
         assert result["status"] == "error"
@@ -185,16 +185,16 @@ class TestDatabaseTools:
         assert len(result["message"]) > 0
 
     @pytest.mark.skip(reason="Requires live ClickHouse connection")
-    def test_run_select_query_nonexistent_table(self, clickhouse_client, test_database):
+    def test_run_query_nonexistent_table(self, clickhouse_client, test_database):
         """Test SELECT query on nonexistent table."""
         query = f"SELECT * FROM {test_database}.nonexistent_table"
-        result = run_select_query(query)
+        result = run_query(query)
 
         assert result["status"] == "error"
         assert "message" in result
 
     @pytest.mark.skip(reason="Requires live ClickHouse connection")
-    def test_run_select_query_timeout(self, clickhouse_client):
+    def test_run_query_timeout(self, clickhouse_client):
         """Test SELECT query timeout handling."""
         # This test simulates a long-running query
         # In a real scenario, you'd use a query that takes longer than the timeout
@@ -208,7 +208,7 @@ class TestDatabaseTools:
 
                 mock_execute.side_effect = slow_query
 
-                result = run_select_query("SELECT sleep(1)")
+                result = run_query("SELECT sleep(1)")
                 assert result["status"] == "error"
                 assert "timed out" in result["message"]
 
@@ -217,7 +217,7 @@ class TestDatabaseTools:
         """Test that only SELECT queries are allowed (readonly enforcement)."""
         # INSERT should fail due to readonly setting
         insert_query = f"INSERT INTO {test_database}.test_table VALUES (999, 'Hacker')"
-        result = run_select_query(insert_query)
+        result = run_query(insert_query)
 
         assert result["status"] == "error"
         # Should contain message about readonly or permissions
@@ -231,7 +231,7 @@ class TestDatabaseTools:
             "SELECT * FROM",  # Incomplete query
         ],
     )
-    def test_run_select_query_invalid_input(self, invalid_query):
+    def test_run_query_invalid_input(self, invalid_query):
         """Test SELECT query with various invalid inputs."""
-        result = run_select_query(invalid_query)
+        result = run_query(invalid_query)
         assert result["status"] == "error"

@@ -654,7 +654,7 @@ Your data is now just a conversation away! Start exploring and discover insights
 **🔗 Useful Links**
 - [ClickHouse Documentation](https://clickhouse.com/docs)
 - [Claude Desktop Download](https://claude.ai/download)
-- [MCP ClickHouse Cloud & On-Prem Repository](https://github.com/your-repo)
+- [MCP ClickHouse Cloud & On-Prem Repository](https://github.com/oualib/chmcp)
 - [ClickHouse Cloud Console](https://console.clickhouse.cloud)
 
 **📧 Questions?**

@@ -26,14 +26,14 @@ class TestIntegration:
                 "CLICKHOUSE_VERIFY": "true",
             },
         ):
-            from chmcp import create_clickhouse_client, run_select_query
+            from chmcp import create_clickhouse_client, run_query
 
             # Test basic connection
             client = create_clickhouse_client()
             assert client is not None
 
             # Test simple query
-            result = run_select_query("SELECT 1 as test_value")
+            result = run_query("SELECT 1 as test_value")
             assert result["status"] == "success"
             assert result["rows"][0][0] == 1
 
@@ -41,7 +41,7 @@ class TestIntegration:
     @pytest.mark.slow
     def test_large_query_performance(self, clickhouse_client, test_database):
         """Test performance with larger datasets."""
-        from chmcp import run_select_query
+        from chmcp import run_query
 
         # Create a larger test table
         large_table = "performance_test_table"
@@ -70,7 +70,7 @@ class TestIntegration:
         import time
 
         start_time = time.time()
-        result = run_select_query(f"SELECT COUNT(*) FROM {test_database}.{large_table}")
+        result = run_query(f"SELECT COUNT(*) FROM {test_database}.{large_table}")
         end_time = time.time()
 
         assert result["status"] == "success"

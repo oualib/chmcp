@@ -9,7 +9,7 @@ from .mcp_server import (
     create_clickhouse_client,
     list_databases,
     list_tables,
-    run_select_query,
+    run_query,
 )
 
 # Import cloud tools to make them available (they auto-register via decorators)
@@ -19,12 +19,12 @@ except ImportError:
     # Cloud tools are optional if cloud dependencies aren't available
     pass
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"
 __author__ = "Badr Ouali"
 
 __all__ = [
     "create_clickhouse_client",
     "list_databases",
     "list_tables",
-    "run_select_query",
+    "run_query",
 ]

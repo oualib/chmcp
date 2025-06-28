@@ -8,9 +8,10 @@ ClickHouse Cloud API with proper authentication, error handling, and response pr
 """
 
 import json
+import os
 import logging
 from dataclasses import dataclass
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, Optional, Union
 from urllib.parse import urljoin
 
 import requests
@@ -19,6 +20,39 @@ from requests.exceptions import RequestException, Timeout
 from .cloud_config import get_cloud_config
 
 logger = logging.getLogger(__name__)
+
+# Utils
+
+
+def clickhouse_cloud_readonly():
+    """
+    Format the CLICKHOUSE_CLOUD_READONLY variable.
+
+    Returns:
+        str: "0" if the value represents false, "1" otherwise
+    """
+
+    value = os.getenv("CLICKHOUSE_CLOUD_READONLY", "1")
+
+    if value is None:
+        return "1"
+
+    # Convert to string and normalize to lowercase
+    str_value = str(value).lower().strip()
+
+    # Define values that should return "0" (false representations)
+    false_values = {"false", "f", "0", "no", "n", "off", "disable", "disabled", ""}
+
+    return "0" if str_value in false_values else "1"
+
+
+class ClickHouseReadOnlyError(Exception):
+    """Exception raised when attempting write operations in read-only mode."""
+
+    pass
+
+
+# Main
 
 
 @dataclass(frozen=True)
@@ -60,7 +94,7 @@ class ClickHouseCloudClient:
             {
                 "Content-Type": "application/json",
                 "Accept": "application/json",
-                "User-Agent": "chmcp/1.0.0",
+                "User-Agent": "chmcp/0.1.1",
             }
         )
 
@@ -184,7 +218,13 @@ class ClickHouseCloudClient:
         Returns:
             API response or error
         """
-        return self.request("POST", endpoint, data=data)
+        if not (clickhouse_cloud_readonly()):
+            return self.request("POST", endpoint, data=data)
+        else:
+            raise ClickHouseReadOnlyError(
+                "CLICKHOUSE_CLOUD_READONLY is ON: Only cloud read-only operations are available (GET). "
+                "Be careful when switching off this parameter - the model might have destructive power."
+            )
 
     def patch(
         self, endpoint: str, data: Optional[Dict[str, Any]] = None
@@ -198,7 +238,13 @@ class ClickHouseCloudClient:
         Returns:
             API response or error
         """
-        return self.request("PATCH", endpoint, data=data)
+        if not (clickhouse_cloud_readonly()):
+            return self.request("PATCH", endpoint, data=data)
+        else:
+            raise ClickHouseReadOnlyError(
+                "CLICKHOUSE_CLOUD_READONLY is ON: Only cloud read-only operations are available (GET). "
+                "Be careful when switching off this parameter - the model might have destructive power."
+            )
 
     def delete(self, endpoint: str) -> Union[CloudAPIResponse, CloudAPIError]:
         """Make a DELETE request.
@@ -209,7 +255,13 @@ class ClickHouseCloudClient:
         Returns:
             API response or error
         """
-        return self.request("DELETE", endpoint)
+        if not (clickhouse_cloud_readonly()):
+            return self.request("DELETE", endpoint)
+        else:
+            raise ClickHouseReadOnlyError(
+                "CLICKHOUSE_CLOUD_READONLY is ON: Only cloud read-only operations are available (GET). "
+                "Be careful when switching off this parameter - the model might have destructive power."
+            )
 
 
 def create_cloud_client() -> ClickHouseCloudClient:
