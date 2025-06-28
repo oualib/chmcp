@@ -10,7 +10,7 @@ and cloud management through the ClickHouse Cloud API.
 
 import atexit
 import concurrent.futures
-import json
+import os
 import logging
 from dataclasses import asdict, dataclass, field, is_dataclass
 from typing import Any, Dict, List, Optional, Union
@@ -24,7 +24,7 @@ from chmcp.mcp_env import get_config
 
 
 # Data models
-@dataclass(frozen=True)
+@dataclass
 class Column:
     """Represents a ClickHouse table column with its metadata."""
 
@@ -37,7 +37,7 @@ class Column:
     comment: Optional[str] = None
 
 
-@dataclass(frozen=True)
+@dataclass
 class Table:
     """Represents a ClickHouse table with its metadata and columns."""
 
@@ -79,7 +79,7 @@ class ErrorResult:
 
 # Constants
 MCP_SERVER_NAME = "chmcp"
-SELECT_QUERY_TIMEOUT_SECS = 30
+QUERY_TIMEOUT_SECS = 30
 MAX_QUERY_WORKERS = 10
 
 # Logging setup
@@ -181,31 +181,6 @@ def create_clickhouse_client():
         raise
 
 
-def get_readonly_setting(client) -> str:
-    """Determine the appropriate readonly setting value for queries.
-
-    This function handles potential conflicts between server and client readonly settings:
-    - readonly=0: No read-only restrictions
-    - readonly=1: Only read queries allowed, settings cannot be changed
-    - readonly=2: Only read queries allowed, settings can be changed (except readonly itself)
-
-    Args:
-        client: ClickHouse client connection
-
-    Returns:
-        String value of readonly setting to use
-    """
-    readonly_setting = client.server_settings.get("readonly")
-
-    if readonly_setting:
-        if readonly_setting == "0":
-            return "1"  # Force read-only mode if server has it disabled
-        else:
-            return readonly_setting.value  # Respect server's readonly setting
-    else:
-        return "1"  # Default to basic read-only mode
-
-
 # Query execution
 def execute_query(query: str) -> Union[QueryResult, ErrorResult]:
     """Execute a query against ClickHouse.
@@ -218,7 +193,16 @@ def execute_query(query: str) -> Union[QueryResult, ErrorResult]:
     """
     try:
         client = create_clickhouse_client()
-        readonly_setting = get_readonly_setting(client)
+        readonly_setting = os.getenv("READONLY", 1)
+        if isinstance(readonly_setting, bool):
+            readonly_setting = int(readonly_setting)
+        elif isinstance(readonly_setting, str) and (
+            readonly_setting.lower().startswith("f")
+            or (readonly_setting.isdigit() and int(readonly_setting) == 0)
+        ):
+            readonly_setting = 0
+        else:
+            readonly_setting = 1
         result = client.query(query, settings={"readonly": readonly_setting})
 
         logger.info(f"Query returned {len(result.result_rows)} rows")
@@ -275,46 +259,32 @@ def list_tables(
         client = create_clickhouse_client()
 
         # Build the main query for table information
-        query_parts = [
-            "SELECT database, name, engine, create_table_query, dependencies_database,",
-            "dependencies_table, engine_full, sorting_key, primary_key, total_rows,",
-            "total_bytes, total_bytes_uncompressed, parts, active_parts, total_marks, comment",
-            "FROM system.tables",
-            f"WHERE database = {format_query_value(database)}",
-        ]
+        query = f"SELECT database, name, engine, create_table_query, dependencies_database, dependencies_table, engine_full, sorting_key, primary_key, total_rows, total_bytes, total_bytes_uncompressed, parts, active_parts, total_marks, comment FROM system.tables WHERE database = {format_query_value(database)}"
 
         if like:
-            query_parts.append(f"AND name LIKE {format_query_value(like)}")
-
+            query += f" AND name LIKE {format_query_value(like)}"
         if not_like:
-            query_parts.append(f"AND name NOT LIKE {format_query_value(not_like)}")
+            query += f" AND name NOT LIKE {format_query_value(not_like)}"
 
-        query = " ".join(query_parts)
         result = client.query(query)
 
-        # Create table objects from the result
+        # Create table objects from the result using your working function
         tables = create_tables_from_result(result.column_names, result.result_rows)
 
         # Fetch column information for each table
-        for i, table in enumerate(tables):
-            column_query = (
-                "SELECT database, table, name, type AS column_type, "
-                "default_kind, default_expression, comment "
-                "FROM system.columns "
-                f"WHERE database = {format_query_value(database)} "
-                f"AND table = {format_query_value(table.name)}"
-            )
-
-            column_result = client.query(column_query)
-            columns = create_columns_from_result(
-                column_result.column_names, column_result.result_rows
-            )
-
-            # Create new table with columns (since it's frozen)
-            tables[i] = dataclass.replace(table, columns=columns)
+        for table in tables:
+            column_data_query = f"SELECT database, table, name, type AS column_type, default_kind, default_expression, comment FROM system.columns WHERE database = {format_query_value(database)} AND table = {format_query_value(table.name)}"
+            column_data_query_result = client.query(column_data_query)
+            table.columns = [
+                c
+                for c in create_columns_from_result(
+                    column_data_query_result.column_names,
+                    column_data_query_result.result_rows,
+                )
+            ]
 
         logger.info(f"Found {len(tables)} tables")
-        return [serialize_dataclass(table) for table in tables]
+        return [asdict(table) for table in tables]
 
     except Exception as e:
         logger.error(f"Failed to list tables: {e}")
@@ -322,23 +292,23 @@ def list_tables(
 
 
 @mcp.tool()
-def run_select_query(query: str) -> Dict[str, Any]:
-    """Run a SELECT query in a ClickHouse database.
+def run_query(query: str) -> Dict[str, Any]:
+    """Run a query in a ClickHouse database.
 
     Args:
-        query: The SELECT query to execute
+        query: The query to execute
 
     Returns:
         Dictionary containing query results or error information
     """
-    logger.info(f"Executing SELECT query: {query}")
+    logger.info(f"Executing query: {query}")
 
     try:
         # Submit query to thread pool with timeout
         future = QUERY_EXECUTOR.submit(execute_query, query)
 
         try:
-            result = future.result(timeout=SELECT_QUERY_TIMEOUT_SECS)
+            result = future.result(timeout=QUERY_TIMEOUT_SECS)
 
             # Convert result to dictionary format
             if isinstance(result, ErrorResult):
@@ -356,17 +326,17 @@ def run_select_query(query: str) -> Dict[str, Any]:
                 )
 
         except concurrent.futures.TimeoutError:
-            logger.warning(f"Query timed out after {SELECT_QUERY_TIMEOUT_SECS} seconds: {query}")
+            logger.warning(f"Query timed out after {QUERY_TIMEOUT_SECS} seconds: {query}")
             future.cancel()
             return serialize_dataclass(
                 ErrorResult(
                     status="error",
-                    message=f"Query timed out after {SELECT_QUERY_TIMEOUT_SECS} seconds",
+                    message=f"Query timed out after {QUERY_TIMEOUT_SECS} seconds",
                 )
             )
 
     except Exception as e:
-        logger.error(f"Unexpected error in run_select_query: {e}")
+        logger.error(f"Unexpected error in run_query: {e}")
         return serialize_dataclass(
             ErrorResult(status="error", message=f"Unexpected error: {str(e)}")
         )

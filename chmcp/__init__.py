@@ -9,7 +9,7 @@ from .mcp_server import (
     create_clickhouse_client,
     list_databases,
     list_tables,
-    run_select_query,
+    run_query,
 )
 
 # Import cloud tools to make them available (they auto-register via decorators)
@@ -26,5 +26,5 @@ __all__ = [
     "create_clickhouse_client",
     "list_databases",
     "list_tables",
-    "run_select_query",
+    "run_query",
 ]
