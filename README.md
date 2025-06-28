@@ -24,6 +24,7 @@ For experienced users, jump to the [Quick Configuration](#quick-configuration) s
 - [🎯 Choose Your Use Case](#-choose-your-use-case)
 - [🌟 Why This Server?](#-why-this-server)
 - [✨ Capabilities Overview](#-capabilities-overview)
+- [🔒 Safety Features](#-safety-features)
 - [⚡ Quick Configuration](#-quick-configuration)
 - [📦 Installation](#-installation)
 - [⚙️ Configuration Guide](#️-configuration-guide)
@@ -61,14 +62,19 @@ This MCP server supports two independent use cases. You can use one or both:
 
 This repository significantly improves over the [original ClickHouse MCP server](https://github.com/ClickHouse/mcp-clickhouse):
 
-| Feature | Original Server | This Server |
+| Feature | Original Server (v0.1.10) | This Server |
 |---------|----------------|-------------|
 | **Database Operations** | 3 basic tools | 3 enhanced tools with safety features |
+| **Query Security** | ❌ `run_select_query` allows ANY SQL operation | ✅ Proper query filtering and readonly mode |
 | **Cloud Management** | ❌ None | ✅ 50+ comprehensive tools (100% API coverage) |
+| **Safety Controls** | ❌ No protection against destructive operations | ✅ Advanced readonly modes for both database and cloud operations |
 | **Code Quality** | Basic | Production-ready with proper structure |
 | **Configuration** | Limited options | Flexible setup for any use case |
 | **Error Handling** | Basic | Robust with detailed error messages |
 | **SSL Support** | Limited | Full SSL configuration options |
+
+> [!WARNING]
+> **Security Notice:** The original ClickHouse MCP server (v0.1.10) has a critical security flaw where `run_select_query` can execute ANY SQL operation including DROP, DELETE, INSERT, etc., despite its name suggesting it only runs SELECT queries. This server implements proper query filtering and safety controls.
 
 ## ✨ Capabilities Overview
 
@@ -89,6 +95,26 @@ Complete ClickHouse Cloud API integration:
 - **ClickPipes** (7 tools): Data ingestion pipeline management
 - **Monitoring** (3 tools): Usage analytics, costs, and audit logs
 - **Network** (6 tools): Private endpoints and security configuration
+
+## 🔒 Safety Features
+
+This MCP server includes comprehensive safety controls to prevent accidental data modification or infrastructure changes:
+
+### 📊 Database Safety
+- **Automatic Read-Only Mode**: All database queries run with `readonly = 1` by default
+- **Query Filtering**: Only SELECT, SHOW, DESCRIBE, and EXPLAIN queries are allowed
+- **Manual Override**: Set `CLICKHOUSE_READONLY=false` to enable write operations when needed
+
+### ☁️ Cloud Management Safety
+- **Protected Operations**: Destructive cloud operations (delete, stop) can be disabled
+- **Safe Mode**: Set `CLICKHOUSE_CLOUD_READONLY=true` to prevent infrastructure changes
+- **Audit Trail**: All operations are logged for accountability
+
+### 🛡️ Security Best Practices
+- **Minimal Privileges**: Create dedicated users with limited permissions
+- **SSL by Default**: Secure connections enabled automatically
+- **Environment Variables**: Sensitive credentials never hardcoded
+- **Timeout Controls**: Prevent runaway queries and operations
 
 ## ⚡ Quick Configuration
 
@@ -115,7 +141,8 @@ Complete ClickHouse Cloud API integration:
         "CLICKHOUSE_PORT": "8443",
         "CLICKHOUSE_USER": "your-username",
         "CLICKHOUSE_PASSWORD": "your-password",
-        "CLICKHOUSE_SECURE": "true"
+        "CLICKHOUSE_SECURE": "true",
+        "CLICKHOUSE_READONLY": "true"
       }
     }
   }
@@ -133,7 +160,8 @@ Complete ClickHouse Cloud API integration:
         "CLICKHOUSE_HOST": "your-instance.clickhouse.cloud",
         "CLICKHOUSE_USER": "default",
         "CLICKHOUSE_PASSWORD": "your-database-password",
-        "CLICKHOUSE_SECURE": "true"
+        "CLICKHOUSE_SECURE": "true",
+        "CLICKHOUSE_READONLY": "true"
       }
     }
   }
@@ -152,7 +180,8 @@ Complete ClickHouse Cloud API integration:
         "CLICKHOUSE_PORT": "8443",
         "CLICKHOUSE_USER": "demo",
         "CLICKHOUSE_PASSWORD": "",
-        "CLICKHOUSE_SECURE": "true"
+        "CLICKHOUSE_SECURE": "true",
+        "CLICKHOUSE_READONLY": "true"
       }
     }
   }
@@ -177,6 +206,9 @@ Complete ClickHouse Cloud API integration:
   }
 }
 ```
+
+> **Note:** `CLICKHOUSE_CLOUD_READONLY` defaults to `false` (full access). Add `"CLICKHOUSE_CLOUD_READONLY": "true"` for monitoring-only mode.
+
 </details>
 
 <details>
@@ -193,6 +225,7 @@ Complete ClickHouse Cloud API integration:
         "CLICKHOUSE_USER": "default",
         "CLICKHOUSE_PASSWORD": "your-database-password",
         "CLICKHOUSE_SECURE": "true",
+        "CLICKHOUSE_READONLY": "true",
         "CLICKHOUSE_CLOUD_KEY_ID": "your-cloud-key-id",
         "CLICKHOUSE_CLOUD_KEY_SECRET": "your-cloud-key-secret"
       }
@@ -200,6 +233,9 @@ Complete ClickHouse Cloud API integration:
   }
 }
 ```
+
+> **Note:** This enables database analysis (readonly) + full cloud management. Add `"CLICKHOUSE_CLOUD_READONLY": "true"` for monitoring-only mode.
+
 </details>
 
 3. **Important:** Replace `/path/to/uv` with the absolute path to your `uv` executable (find it with `which uv` on macOS/Linux)
@@ -241,6 +277,13 @@ CLICKHOUSE_USER=your-username               # Username for authentication
 CLICKHOUSE_PASSWORD=your-password           # Password for authentication
 ```
 
+#### Safety & Security Variables
+```bash
+CLICKHOUSE_READONLY=true                    # Enable read-only mode (recommended)
+                                           # true: Only SELECT/SHOW/DESCRIBE queries allowed
+                                           # false: All SQL operations permitted
+```
+
 #### Optional Variables (with defaults)
 ```bash
 CLICKHOUSE_PORT=8443                        # 8443 for HTTPS, 8123 for HTTP
@@ -252,7 +295,7 @@ CLICKHOUSE_DATABASE=default                 # Default database to use
 ```
 
 > [!CAUTION]
-> **Security Best Practice:** Create a dedicated database user with minimal privileges for MCP connections. Avoid using administrative accounts.
+> **Security Best Practice:** Always use `CLICKHOUSE_READONLY=true` in production environments. Create a dedicated database user with minimal privileges for MCP connections. Avoid using administrative accounts.
 
 ### ☁️ Cloud API Configuration
 
@@ -264,12 +307,22 @@ CLICKHOUSE_CLOUD_KEY_ID=your-cloud-key-id          # From ClickHouse Cloud Conso
 CLICKHOUSE_CLOUD_KEY_SECRET=your-cloud-key-secret  # From ClickHouse Cloud Console
 ```
 
+#### Safety & Security Variables
+```bash
+CLICKHOUSE_CLOUD_READONLY=false            # Cloud operation mode (default: false)
+                                           # true: Only read operations (list, get, metrics)
+                                           # false: All cloud operations permitted (create, update, delete)
+```
+
 #### Optional Variables (with defaults)
 ```bash
 CLICKHOUSE_CLOUD_API_URL=https://api.clickhouse.cloud   # API endpoint
 CLICKHOUSE_CLOUD_TIMEOUT=30                             # Request timeout
 CLICKHOUSE_CLOUD_SSL_VERIFY=true                        # SSL verification
 ```
+
+> [!WARNING]
+> **Cloud Safety:** By default, `CLICKHOUSE_CLOUD_READONLY=false` allows all infrastructure operations. Set to `true` in production to prevent accidental infrastructure changes. When disabled, Claude can create, modify, and delete cloud services, which may incur costs or cause service disruptions.
 
 ### 🔑 Getting ClickHouse Cloud API Keys
 
@@ -282,34 +335,93 @@ CLICKHOUSE_CLOUD_SSL_VERIFY=true                        # SSL verification
    - **Query Endpoints**: Limited to query operations
 5. Copy the **Key ID** and **Key Secret** to your configuration
 
+### 🔒 Safety Configuration Examples
+
+<details>
+<summary><strong>Production Safe Mode (Recommended)</strong></summary>
+
+```env
+# Database - read-only queries only
+CLICKHOUSE_HOST=your-instance.clickhouse.cloud
+CLICKHOUSE_USER=readonly_user
+CLICKHOUSE_PASSWORD=secure-password
+CLICKHOUSE_SECURE=true
+CLICKHOUSE_READONLY=true
+
+# Cloud - monitoring and inspection only (explicitly set to true)
+CLICKHOUSE_CLOUD_KEY_ID=your-cloud-key-id
+CLICKHOUSE_CLOUD_KEY_SECRET=your-cloud-key-secret
+CLICKHOUSE_CLOUD_READONLY=true
+```
+</details>
+
+<details>
+<summary><strong>Development Mode (Full Access)</strong></summary>
+
+```env
+# Database - all operations allowed
+CLICKHOUSE_HOST=localhost
+CLICKHOUSE_USER=default
+CLICKHOUSE_PASSWORD=clickhouse
+CLICKHOUSE_SECURE=false
+CLICKHOUSE_READONLY=false
+
+# Cloud - full infrastructure management
+CLICKHOUSE_CLOUD_KEY_ID=dev-key-id
+CLICKHOUSE_CLOUD_KEY_SECRET=dev-key-secret
+CLICKHOUSE_CLOUD_READONLY=false
+```
+</details>
+
+<details>
+<summary><strong>Analysis Only Mode</strong></summary>
+
+```env
+# Database - read-only for data analysis
+CLICKHOUSE_HOST=analytics.company.com
+CLICKHOUSE_USER=analyst
+CLICKHOUSE_PASSWORD=analyst-password
+CLICKHOUSE_SECURE=true
+CLICKHOUSE_READONLY=true
+
+# Cloud - monitoring only, no infrastructure changes
+CLICKHOUSE_CLOUD_KEY_ID=monitoring-key-id
+CLICKHOUSE_CLOUD_KEY_SECRET=monitoring-key-secret
+CLICKHOUSE_CLOUD_READONLY=true
+```
+</details>
+
 ### Example Configurations
 
 <details>
 <summary><strong>Local Development with Docker</strong></summary>
 
 ```env
-# Database only
+# Database only - full access for development
 CLICKHOUSE_HOST=localhost
 CLICKHOUSE_USER=default
 CLICKHOUSE_PASSWORD=clickhouse
 CLICKHOUSE_SECURE=false
 CLICKHOUSE_PORT=8123
+CLICKHOUSE_READONLY=false
 ```
 </details>
 
 <details>
-<summary><strong>ClickHouse Cloud (Database + Management)</strong></summary>
+<summary><strong>ClickHouse Cloud (Safe Mode)</strong></summary>
 
 ```env
-# Database connection
+# Database connection - read-only
 CLICKHOUSE_HOST=your-instance.clickhouse.cloud
 CLICKHOUSE_USER=default
 CLICKHOUSE_PASSWORD=your-database-password
 CLICKHOUSE_SECURE=true
+CLICKHOUSE_READONLY=true
 
-# Cloud management
+# Cloud management - monitoring only (explicitly set to true)
 CLICKHOUSE_CLOUD_KEY_ID=your-cloud-key-id
 CLICKHOUSE_CLOUD_KEY_SECRET=your-cloud-key-secret
+CLICKHOUSE_CLOUD_READONLY=true
 ```
 </details>
 
@@ -321,6 +433,8 @@ If you encounter SSL certificate verification issues:
 ```env
 # Disable SSL verification for database
 CLICKHOUSE_VERIFY=false
+CLICKHOUSE_SECURE=false  # Use HTTP instead of HTTPS
+CLICKHOUSE_PORT=8123     # HTTP port instead of 8443
 
 # Disable SSL verification for cloud API
 CLICKHOUSE_CLOUD_SSL_VERIFY=false
@@ -335,87 +449,102 @@ These tools work with any ClickHouse database when database configuration is pro
 
 - **`list_databases()`** - List all available databases
 - **`list_tables(database, like?, not_like?)`** - List tables with detailed metadata including schema, row counts, and column information
-- **`run_select_query(query)`** - Execute SELECT queries safely (all queries run with `readonly = 1` for security)
+- **`run_query(query)`** - Execute queries with safety controls:
+  - **Read-only mode** (`CLICKHOUSE_READONLY=true`): Only SELECT, SHOW, DESCRIBE, EXPLAIN queries
+  - **Full access mode** (`CLICKHOUSE_READONLY=false`): All SQL operations including INSERT, UPDATE, DELETE, CREATE, DROP
+
+> [!NOTE]
+> **Query Safety:** When `CLICKHOUSE_READONLY=true`, all queries automatically run with `readonly = 1` setting and are filtered to prevent data modification operations.
 
 ### ☁️ Cloud Management Tools (50+ tools)
 
-These tools work with ClickHouse Cloud when API credentials are provided:
+These tools work with ClickHouse Cloud when API credentials are provided. Tool availability depends on the `CLICKHOUSE_CLOUD_READONLY` setting:
 
-#### Organization Management (5 tools)
+#### 🔍 Read-Only Operations (Available when `CLICKHOUSE_CLOUD_READONLY=true`)
+**Organization Monitoring (3 tools)**
 - `cloud_list_organizations()` - List available organizations
 - `cloud_get_organization(organization_id)` - Get organization details
-- `cloud_update_organization(organization_id, name?, private_endpoints?)` - Update organization settings
 - `cloud_get_organization_metrics(organization_id, filtered_metrics?)` - Get Prometheus metrics
-- `cloud_get_organization_private_endpoint_info(organization_id, cloud_provider, region)` - Get private endpoint information
 
-#### Service Management (12 tools)
+**Service Monitoring (3 tools)**
 - `cloud_list_services(organization_id)` - List all services in organization
 - `cloud_get_service(organization_id, service_id)` - Get detailed service information
-- `cloud_create_service(organization_id, name, provider, region, ...)` - Create new service with full configuration options
+- `cloud_get_service_metrics(organization_id, service_id, filtered_metrics?)` - Get service performance metrics
+
+**Resource Inspection (8 tools)**
+- `cloud_list_api_keys(organization_id)` - List all API keys (metadata only)
+- `cloud_get_api_key(organization_id, key_id)` - Get API key details
+- `cloud_list_members(organization_id)` - List organization members
+- `cloud_get_member(organization_id, user_id)` - Get member details
+- `cloud_list_invitations(organization_id)` - List pending invitations
+- `cloud_get_invitation(organization_id, invitation_id)` - Get invitation details
+- `cloud_list_backups(organization_id, service_id)` - List service backups
+- `cloud_get_backup(organization_id, service_id, backup_id)` - Get backup details
+
+**Configuration Inspection (5 tools)**
+- `cloud_get_backup_configuration(organization_id, service_id)` - Get backup configuration
+- `cloud_get_private_endpoint_config(organization_id, service_id)` - Get private endpoint configuration
+- `cloud_list_clickpipes(organization_id, service_id)` - List ClickPipes
+- `cloud_get_clickpipe(organization_id, service_id, clickpipe_id)` - Get ClickPipe details
+- `cloud_get_available_regions()` - Get supported regions
+
+**Analytics & Monitoring (3 tools)**
+- `cloud_list_activities(organization_id, from_date?, to_date?)` - Get audit logs
+- `cloud_get_activity(organization_id, activity_id)` - Get activity details
+- `cloud_get_usage_cost(organization_id, from_date, to_date)` - Get usage analytics
+
+#### ⚠️ Write Operations (Available only when `CLICKHOUSE_CLOUD_READONLY=false`)
+**Organization Management (2 tools)**
+- `cloud_update_organization(organization_id, name?, private_endpoints?)` - Update organization settings
+- `cloud_get_organization_private_endpoint_info(organization_id, cloud_provider, region)` - Get private endpoint info
+
+**Service Management (9 tools)**
+- `cloud_create_service(organization_id, name, provider, region, ...)` - Create new service
 - `cloud_update_service(organization_id, service_id, ...)` - Update service settings
 - `cloud_update_service_state(organization_id, service_id, command)` - Start/stop services
-- `cloud_update_service_scaling(organization_id, service_id, ...)` - Configure auto-scaling (legacy method)
-- `cloud_update_service_replica_scaling(organization_id, service_id, ...)` - Configure replica-based scaling (preferred)
+- `cloud_update_service_scaling(organization_id, service_id, ...)` - Configure scaling (legacy)
+- `cloud_update_service_replica_scaling(organization_id, service_id, ...)` - Configure replica scaling
 - `cloud_update_service_password(organization_id, service_id, ...)` - Update service password
 - `cloud_create_service_private_endpoint(organization_id, service_id, id, description)` - Create private endpoint
-- `cloud_get_service_metrics(organization_id, service_id, filtered_metrics?)` - Get service performance metrics
-- `cloud_delete_service(organization_id, service_id)` - Delete service (must be stopped first)
+- `cloud_delete_service(organization_id, service_id)` - Delete service
 
-#### API Key Management (5 tools)
-- `cloud_list_api_keys(organization_id)` - List all API keys
-- `cloud_create_api_key(organization_id, name, roles, ...)` - Create new API key with permissions
-- `cloud_get_api_key(organization_id, key_id)` - Get API key details
+**API Key Management (3 tools)**
+- `cloud_create_api_key(organization_id, name, roles, ...)` - Create new API key
 - `cloud_update_api_key(organization_id, key_id, ...)` - Update API key properties
 - `cloud_delete_api_key(organization_id, key_id)` - Delete API key
 
-#### User Management (8 tools)
-- `cloud_list_members(organization_id)` - List organization members
-- `cloud_get_member(organization_id, user_id)` - Get member details
+**User Management (3 tools)**
 - `cloud_update_member_role(organization_id, user_id, role)` - Update member role
-- `cloud_remove_member(organization_id, user_id)` - Remove member from organization
-- `cloud_list_invitations(organization_id)` - List pending invitations
-- `cloud_create_invitation(organization_id, email, role)` - Send invitation to join organization
-- `cloud_get_invitation(organization_id, invitation_id)` - Get invitation details
-- `cloud_delete_invitation(organization_id, invitation_id)` - Cancel pending invitation
+- `cloud_remove_member(organization_id, user_id)` - Remove member
+- `cloud_create_invitation(organization_id, email, role)` - Send invitation
+- `cloud_delete_invitation(organization_id, invitation_id)` - Cancel invitation
 
-#### Backup Management (4 tools)
-- `cloud_list_backups(organization_id, service_id)` - List service backups
-- `cloud_get_backup(organization_id, service_id, backup_id)` - Get backup details and status
-- `cloud_get_backup_configuration(organization_id, service_id)` - Get backup configuration
+**Infrastructure Management (12 tools)**
 - `cloud_update_backup_configuration(organization_id, service_id, ...)` - Update backup settings
-
-#### Data Pipeline Management (7 tools - Beta)
-- `cloud_list_clickpipes(organization_id, service_id)` - List ClickPipes for data ingestion
-- `cloud_create_clickpipe(organization_id, service_id, name, description, source, destination, field_mappings?)` - Create data ingestion pipeline
-- `cloud_get_clickpipe(organization_id, service_id, clickpipe_id)` - Get ClickPipe details and status
-- `cloud_update_clickpipe(organization_id, service_id, clickpipe_id, ...)` - Update ClickPipe configuration
-- `cloud_update_clickpipe_scaling(organization_id, service_id, clickpipe_id, replicas?)` - Scale ClickPipe processing
-- `cloud_update_clickpipe_state(organization_id, service_id, clickpipe_id, command)` - Start/stop/resync ClickPipe
+- `cloud_create_clickpipe(organization_id, service_id, name, description, source, destination, field_mappings?)` - Create ClickPipe
+- `cloud_update_clickpipe(organization_id, service_id, clickpipe_id, ...)` - Update ClickPipe
+- `cloud_update_clickpipe_scaling(organization_id, service_id, clickpipe_id, replicas?)` - Scale ClickPipe
+- `cloud_update_clickpipe_state(organization_id, service_id, clickpipe_id, command)` - Control ClickPipe state
 - `cloud_delete_clickpipe(organization_id, service_id, clickpipe_id)` - Delete ClickPipe
+- `cloud_list_reverse_private_endpoints(organization_id, service_id)` - List reverse private endpoints
+- `cloud_create_reverse_private_endpoint(organization_id, service_id, ...)` - Create reverse private endpoint
+- `cloud_get_reverse_private_endpoint(organization_id, service_id, reverse_private_endpoint_id)` - Get details
+- `cloud_delete_reverse_private_endpoint(organization_id, service_id, reverse_private_endpoint_id)` - Delete endpoint
+- `cloud_create_query_endpoint_config(organization_id, service_id, roles, open_api_keys, allowed_origins)` - Create query config
+- `cloud_delete_query_endpoint_config(organization_id, service_id)` - Delete query config
 
-#### Network & Security (6 tools)
-- `cloud_get_private_endpoint_config(organization_id, service_id)` - Get private endpoint configuration
-- `cloud_list_reverse_private_endpoints(organization_id, service_id)` - List reverse private endpoints (Beta)
-- `cloud_create_reverse_private_endpoint(organization_id, service_id, description, type, ...)` - Create reverse private endpoint (Beta)
-- `cloud_get_reverse_private_endpoint(organization_id, service_id, reverse_private_endpoint_id)` - Get reverse private endpoint details (Beta)
-- `cloud_delete_reverse_private_endpoint(organization_id, service_id, reverse_private_endpoint_id)` - Delete reverse private endpoint (Beta)
-- `cloud_get_available_regions()` - Get supported cloud regions and providers
-
-#### Monitoring & Analytics (3 tools)
-- `cloud_list_activities(organization_id, from_date?, to_date?)` - Get audit logs and activity history
-- `cloud_get_activity(organization_id, activity_id)` - Get detailed activity information
-- `cloud_get_usage_cost(organization_id, from_date, to_date)` - Get detailed usage and cost analytics
-
-#### Query Endpoints (3 tools - Experimental)
-- `cloud_get_query_endpoint_config(organization_id, service_id)` - Get query endpoint configuration
-- `cloud_create_query_endpoint_config(organization_id, service_id, roles, open_api_keys, allowed_origins)` - Create query endpoint configuration
-- `cloud_delete_query_endpoint_config(organization_id, service_id)` - Delete query endpoint configuration
+> [!CAUTION]
+> **Production Warning:** Write operations can create billable resources, modify running services, or delete infrastructure. Always use `CLICKHOUSE_CLOUD_READONLY=true` in production unless infrastructure changes are specifically required.
 
 ## 💡 Usage Examples
 
 ### 📊 Database Operations Examples
 
+#### Safe Analysis Mode
 ```python
+# With CLICKHOUSE_READONLY=true (recommended for production)
+# Only analytical queries are allowed
+
 # Explore database structure
 databases = list_databases()
 print(f"Available databases: {[db['name'] for db in databases]}")
@@ -425,8 +554,8 @@ tables = list_tables("my_database")
 for table in tables:
     print(f"Table: {table['name']}, Rows: {table['total_rows']}")
 
-# Execute analytical queries
-result = run_select_query("""
+# Execute analytical queries safely
+result = run_query("""
     SELECT 
         date_trunc('day', timestamp) as day,
         count(*) as events,
@@ -436,16 +565,75 @@ result = run_select_query("""
     GROUP BY day
     ORDER BY day
 """)
+
+# These queries would be blocked in readonly mode:
+# run_query("DROP TABLE my_table")  # ❌ Blocked
+# run_query("INSERT INTO my_table VALUES (1)")  # ❌ Blocked
+# run_query("UPDATE my_table SET value = 0")  # ❌ Blocked
+```
+
+#### Full Access Mode
+```python
+# With CLICKHOUSE_READONLY=false (development only)
+# All SQL operations are allowed
+
+# Data modification operations
+run_query("""
+    CREATE TABLE test_table (
+        id UInt32,
+        name String,
+        created_at DateTime
+    ) ENGINE = MergeTree()
+    ORDER BY id
+""")
+
+run_query("INSERT INTO test_table VALUES (1, 'test', now())")
+run_query("UPDATE test_table SET name = 'updated' WHERE id = 1")
 ```
 
 ### ☁️ Cloud Management Examples
 
+#### Monitoring Mode (Safe)
 ```python
-# List all organizations and services
+# With CLICKHOUSE_CLOUD_READONLY=true (recommended for production)
+# Only monitoring and inspection operations
+
+# Monitor organization resources
 orgs = cloud_list_organizations()
 for org in orgs:
     services = cloud_list_services(org['id'])
     print(f"Organization: {org['name']}, Services: {len(services)}")
+    
+    # Get service metrics
+    for service in services:
+        metrics = cloud_get_service_metrics(org['id'], service['id'])
+        print(f"Service {service['name']} metrics: {metrics}")
+
+# Monitor costs and usage
+usage = cloud_get_usage_cost(
+    organization_id="org-123",
+    from_date="2024-01-01",
+    to_date="2024-01-31"
+)
+print(f"Monthly cost: ${usage['total_cost']}")
+
+# Audit recent activities
+activities = cloud_list_activities(
+    organization_id="org-123",
+    from_date="2024-01-01T00:00:00Z"
+)
+print(f"Recent activities: {len(activities)} events")
+
+# These operations would be blocked in readonly mode:
+# cloud_create_service(...)  # ❌ Blocked
+# cloud_delete_service(...)  # ❌ Blocked  
+# cloud_update_service_state(...)  # ❌ Blocked
+```
+
+#### Infrastructure Management (Full Access)
+```python
+# With CLICKHOUSE_CLOUD_READONLY=false (use with caution)
+# All infrastructure operations allowed
 
 # Create a production service with full configuration
 service = cloud_create_service(
@@ -482,52 +670,58 @@ cloud_update_backup_configuration(
 )
 ```
 
-### 🔄 Combined Workflow Example
+### 🔄 Safe Combined Workflow Example
 
 ```python
-# 1. Create cloud infrastructure
-service = cloud_create_service(
-    organization_id="org-123",
-    name="data-pipeline",
-    provider="aws",
-    region="us-west-2"
+# Production-safe configuration for monitoring and analysis
+# CLICKHOUSE_READONLY=true + CLICKHOUSE_CLOUD_READONLY=true
+
+# 1. Monitor existing cloud infrastructure
+orgs = cloud_list_organizations()
+org_id = orgs[0]['id']
+
+services = cloud_list_services(org_id)
+active_services = [s for s in services if s['state'] == 'running']
+print(f"Active services: {len(active_services)}")
+
+# 2. Analyze data from running services
+for service in active_services:
+    # Check service health
+    metrics = cloud_get_service_metrics(org_id, service['id'])
+    
+    # Analyze data (read-only queries)
+    if service['endpoints']:
+        # Connect to database (would use service endpoint)
+        result = run_query("""
+            SELECT 
+                database,
+                table,
+                sum(rows) as total_rows,
+                sum(bytes_on_disk) as disk_usage
+            FROM system.parts
+            WHERE active = 1
+            GROUP BY database, table
+            ORDER BY total_rows DESC
+            LIMIT 10
+        """)
+        
+        print(f"Top tables in {service['name']}: {result}")
+
+# 3. Generate usage report
+usage = cloud_get_usage_cost(
+    organization_id=org_id,
+    from_date="2024-01-01",
+    to_date="2024-01-31"
 )
 
-# 2. Wait for service to be ready, then connect to database
-# (Once service is running, use its hostname for database connection)
+activities = cloud_list_activities(org_id)
+recent_changes = [a for a in activities if 'create' in a.get('action', '').lower()]
 
-# 3. Set up data ingestion pipeline
-clickpipe = cloud_create_clickpipe(
-    organization_id="org-123",
-    service_id=service['id'],
-    name="kafka-events",
-    description="Real-time event ingestion",
-    source={
-        "kafka": {
-            "type": "kafka",
-            "format": "JSONEachRow",
-            "brokers": "kafka.example.com:9092",
-            "topics": "user-events",
-            "authentication": "SASL_SSL"
-        }
-    },
-    destination={
-        "database": "analytics",
-        "table": "events",
-        "managedTable": True
-    }
-)
-
-# 4. Query the ingested data
-result = run_select_query("""
-    SELECT 
-        event_type,
-        count(*) as event_count,
-        uniq(user_id) as unique_users
-    FROM analytics.events
-    WHERE timestamp >= now() - INTERVAL 1 HOUR
-    GROUP BY event_type
-    ORDER BY event_count DESC
+print(f"""
+Monthly Report:
+- Total Cost: ${usage.get('total_cost', 'N/A')}
+- Active Services: {len(active_services)}
+- Recent Infrastructure Changes: {len(recent_changes)}
 """)
 ```
 
@@ -544,16 +738,18 @@ result = run_select_query("""
 2. **Create environment file**:
    ```bash
    cat > .env << EOF
-   # Database configuration
+   # Database configuration (development mode)
    CLICKHOUSE_HOST=localhost
    CLICKHOUSE_PORT=8123
    CLICKHOUSE_USER=default
    CLICKHOUSE_PASSWORD=clickhouse
    CLICKHOUSE_SECURE=false
+   CLICKHOUSE_READONLY=false
    
-   # Cloud configuration (optional)
+   # Cloud configuration (optional, safe mode)
    CLICKHOUSE_CLOUD_KEY_ID=your-key-id
    CLICKHOUSE_CLOUD_KEY_SECRET=your-key-secret
+   CLICKHOUSE_CLOUD_READONLY=true
    EOF
    ```
 
@@ -565,6 +761,19 @@ result = run_select_query("""
    # OR
    python -m chmcp.main                 # Start normally
    ```
+
+### Testing Safety Features
+
+```bash
+# Test read-only database mode
+CLICKHOUSE_READONLY=true python -m chmcp.main
+
+# Test cloud monitoring mode  
+CLICKHOUSE_CLOUD_READONLY=true python -m chmcp.main
+
+# Test full access mode (development only)
+CLICKHOUSE_READONLY=false CLICKHOUSE_CLOUD_READONLY=false python -m chmcp.main
+```
 
 ### Project Structure
 
@@ -607,6 +816,12 @@ CLICKHOUSE_SECURE=false  # Use HTTP instead of HTTPS
 CLICKHOUSE_PORT=8123     # HTTP port instead of 8443
 ```
 
+**Problem:** Queries are being blocked
+- ✅ Check if `CLICKHOUSE_READONLY=true` is preventing write operations
+- ✅ For development, temporarily set `CLICKHOUSE_READONLY=false`
+- ✅ Review query for prohibited operations (INSERT, UPDATE, DELETE, CREATE, DROP)
+- ✅ Use SHOW, DESCRIBE, EXPLAIN, or SELECT queries instead
+
 ### ☁️ Cloud API Issues
 
 **Problem:** Cloud tools not working
@@ -614,6 +829,12 @@ CLICKHOUSE_PORT=8123     # HTTP port instead of 8443
 - ✅ Check API key permissions in ClickHouse Cloud Console
 - ✅ Ensure API key is active and not expired
 - ✅ For SSL issues, try setting `CLICKHOUSE_CLOUD_SSL_VERIFY=false`
+
+**Problem:** "Operation not permitted" errors
+- ✅ Check if `CLICKHOUSE_CLOUD_READONLY=true` is blocking write operations
+- ✅ For infrastructure management, set `CLICKHOUSE_CLOUD_READONLY=false`
+- ✅ Verify API key has sufficient permissions for the requested operation
+- ✅ Review operation type: monitoring operations work in readonly mode, management operations require write access
 
 **Problem:** "Organization not found" errors
 - ✅ List organizations first: `cloud_list_organizations()`
@@ -629,6 +850,12 @@ CLICKHOUSE_PORT=8123     # HTTP port instead of 8443
 - ✅ Restart Claude Desktop after configuration changes
 - ✅ Verify `uv` path is absolute in configuration
 
+**Problem:** Safety features not working as expected
+- ✅ Confirm environment variables are properly set: `echo $CLICKHOUSE_READONLY`
+- ✅ Check boolean values are strings: `"true"` not `true` in JSON config
+- ✅ Restart the MCP server after changing readonly settings
+- ✅ Test with simple operations first to verify behavior
+
 **Problem:** Import errors or missing dependencies
 ```bash
 # Reinstall with latest dependencies
@@ -636,6 +863,32 @@ uv sync --force
 # Or manual installation
 pip install -r requirements.txt --force-reinstall
 ```
+
+### 🔒 Safety Configuration Troubleshooting
+
+**Problem:** Want to enable write operations temporarily
+```bash
+# For database operations
+export CLICKHOUSE_READONLY=false
+# For cloud operations  
+export CLICKHOUSE_CLOUD_READONLY=false
+# Restart MCP server
+```
+
+**Problem:** Accidentally enabled write mode in production
+```bash
+# Immediately disable write operations
+export CLICKHOUSE_READONLY=true
+export CLICKHOUSE_CLOUD_READONLY=true
+# Restart MCP server
+# Review audit logs: cloud_list_activities()
+```
+
+**Problem:** Unclear which operations are blocked
+- ✅ **Database readonly mode blocks:** INSERT, UPDATE, DELETE, CREATE, DROP, ALTER, TRUNCATE
+- ✅ **Database readonly mode allows:** SELECT, SHOW, DESCRIBE, EXPLAIN, WITH (read-only)
+- ✅ **Cloud readonly mode blocks:** create_*, update_*, delete_*, start/stop services
+- ✅ **Cloud readonly mode allows:** list_*, get_*, metrics, monitoring, analytics
 
 ## 📄 License
 

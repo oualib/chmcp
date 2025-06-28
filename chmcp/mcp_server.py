@@ -149,6 +149,28 @@ def create_columns_from_result(column_names: List[str], rows: List[List[Any]]) -
     return [Column(**dict(zip(column_names, row))) for row in rows]
 
 
+def clickhouse_readonly():
+    """
+    Format the CLICKHOUSE_READONLY variable.
+
+    Returns:
+        str: "0" if the value represents false, "1" otherwise
+    """
+
+    value = os.getenv("CLICKHOUSE_READONLY", "1")
+
+    if value is None:
+        return "1"
+
+    # Convert to string and normalize to lowercase
+    str_value = str(value).lower().strip()
+
+    # Define values that should return "0" (false representations)
+    false_values = {"false", "f", "0", "no", "n", "off", "disable", "disabled", ""}
+
+    return "0" if str_value in false_values else "1"
+
+
 # ClickHouse client management
 def create_clickhouse_client():
     """Create and test a ClickHouse client connection.
@@ -193,17 +215,7 @@ def execute_query(query: str) -> Union[QueryResult, ErrorResult]:
     """
     try:
         client = create_clickhouse_client()
-        readonly_setting = os.getenv("READONLY", 1)
-        if isinstance(readonly_setting, bool):
-            readonly_setting = int(readonly_setting)
-        elif isinstance(readonly_setting, str) and (
-            readonly_setting.lower().startswith("f")
-            or (readonly_setting.isdigit() and int(readonly_setting) == 0)
-        ):
-            readonly_setting = 0
-        else:
-            readonly_setting = 1
-        result = client.query(query, settings={"readonly": readonly_setting})
+        result = client.query(query, settings={"readonly": clickhouse_readonly()})
 
         logger.info(f"Query returned {len(result.result_rows)} rows")
         return QueryResult(columns=result.column_names, rows=result.result_rows)
