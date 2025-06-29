@@ -13,7 +13,7 @@ A comprehensive Model Context Protocol (MCP) server that provides **two distinct
 
 Start with our step-by-step tutorial:
 
-👉 **[Complete Setup Tutorial](tutorial/README.md)** - Transform Claude into a powerful ClickHouse data agent
+👉 **[Complete Setup Tutorial](https://github.com/oualib/chmcp/tree/main/tutorial/README.md)** - Transform Claude into a powerful ClickHouse data agent
 
 For experienced users, jump to the [Quick Configuration](#quick-configuration) section below.
 
@@ -106,8 +106,8 @@ This MCP server includes comprehensive safety controls to prevent accidental dat
 - **Manual Override**: Set `CLICKHOUSE_READONLY=false` to enable write operations when needed
 
 ### ☁️ Cloud Management Safety
-- **Protected Operations**: Destructive cloud operations (delete, stop) can be disabled
-- **Safe Mode**: Set `CLICKHOUSE_CLOUD_READONLY=true` to prevent infrastructure changes
+- **Protected Operations**: Destructive cloud operations (delete, stop) can be enabled
+- **Safe Mode**: Set `CLICKHOUSE_CLOUD_READONLY=false` to allow infrastructure changes
 - **Audit Trail**: All operations are logged for accountability
 
 ### 🛡️ Security Best Practices
@@ -207,7 +207,7 @@ This MCP server includes comprehensive safety controls to prevent accidental dat
 }
 ```
 
-> **Note:** `CLICKHOUSE_CLOUD_READONLY` defaults to `false` (full access). Add `"CLICKHOUSE_CLOUD_READONLY": "true"` for monitoring-only mode.
+> **Note:** `CLICKHOUSE_CLOUD_READONLY` defaults to `true` (monitoring-only mode). Add `"CLICKHOUSE_CLOUD_READONLY": "false"` for full access.
 
 </details>
 
@@ -272,14 +272,14 @@ Set these environment variables to enable database operations:
 
 #### Required Variables
 ```bash
-CLICKHOUSE_HOST=your-clickhouse-host.com    # ClickHouse server hostname
-CLICKHOUSE_USER=your-username               # Username for authentication
-CLICKHOUSE_PASSWORD=your-password           # Password for authentication
+CLICKHOUSE_HOST=your-clickhouse-host.com   # ClickHouse server hostname
+CLICKHOUSE_USER=your-username              # Username for authentication
+CLICKHOUSE_PASSWORD=your-password          # Password for authentication
 ```
 
 #### Safety & Security Variables
 ```bash
-CLICKHOUSE_READONLY=true                    # Enable read-only mode (recommended)
+CLICKHOUSE_READONLY=true                   # Enable read-only mode (recommended)
                                            # true: Only SELECT/SHOW/DESCRIBE queries allowed
                                            # false: All SQL operations permitted
 ```

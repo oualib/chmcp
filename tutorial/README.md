@@ -461,6 +461,16 @@ If you're using your own ClickHouse server, use this configuration instead:
    - Contributing to the project
    - Running unreleased features
 
+4. **📊 Database Safety**
+- **Automatic Read-Only Mode**: All database queries run with `readonly = 1` by default
+- **Query Filtering**: Only SELECT, SHOW, DESCRIBE, and EXPLAIN queries are allowed
+- **Manual Override**: Set `CLICKHOUSE_READONLY=false` to enable write operations when needed
+
+5. **Cloud Management Safety**
+- **Protected Operations**: Destructive cloud operations (delete, stop) can be enabled
+- **Safe Mode**: Set `CLICKHOUSE_CLOUD_READONLY=false` to allow infrastructure changes
+- **Audit Trail**: All operations are logged for accountability
+
 ### Step 5: Save and Restart
 
 1. **Save Configuration**
