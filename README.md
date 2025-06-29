@@ -1,6 +1,7 @@
 # MCP ClickHouse: Database Operations + Cloud Management
 
 [![PyPI - Version](https://img.shields.io/pypi/v/chmcp)](https://pypi.org/project/chmcp)
+![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)
 [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
@@ -256,8 +257,20 @@ uv add chmcp
 git clone https://github.com/oualib/chmcp.git
 cd chmcp
 
-# Install dependencies
-pip install -r requirements.txt
+# Install core dependencies
+pip install .
+
+# Install with development dependencies
+pip install ".[dev]"
+
+# Install with test dependencies
+pip install ".[test]"
+
+# Install with documentation dependencies
+pip install ".[docs]"
+
+# Install with all optional dependencies
+pip install ".[dev,test,docs]"
 
 # Set up environment variables
 cp .env.example .env
@@ -860,8 +873,17 @@ CLICKHOUSE_PORT=8123     # HTTP port instead of 8443
 ```bash
 # Reinstall with latest dependencies
 uv sync --force
-# Or manual installation
-pip install -r requirements.txt --force-reinstall
+# Core dependencies with force reinstall
+pip install . --force-reinstall
+
+# With development dependencies
+pip install ".[dev]" --force-reinstall
+
+# With all optional dependencies
+pip install ".[dev,test,docs]" --force-reinstall
+
+# Editable install with force reinstall
+pip install -e ".[dev]" --force-reinstall
 ```
 
 ### 🔒 Safety Configuration Troubleshooting
