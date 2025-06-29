@@ -1,6 +1,6 @@
 [project]
 name = "chmcp"
-version = "0.1.1"
+version = "0.1.2"
 description = "A comprehensive Model Context Protocol (MCP) server for ClickHouse database operations and ClickHouse Cloud management."
 readme = "README.md"
 license = "Apache-2.0"
